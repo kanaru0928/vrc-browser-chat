@@ -16,7 +16,7 @@ export function ServerStatus() {
           </Alert>
           <h3 className="text-sm font-semibold">Server URL</h3>
           <div className="flex items-center gap-2">
-            <p className="py-2 px-3 rounded-md border border-accent text-sm flex-1">
+            <p className="py-2 px-3 rounded-md border border-input text-sm flex-1">
               http://localhost:11087
             </p>
             <Button variant="outline" asChild>

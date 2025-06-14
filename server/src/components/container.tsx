@@ -15,7 +15,7 @@ export function Container({
   const ContainerElement = asChild ? Fragment : "div";
 
   return (
-    <ContainerElement className={cn("bg-card border-2 border-accent py-2 px-4 rounded-lg shadow-xl shadow-card/60", className)}>
+    <ContainerElement className={cn("bg-card border-2 border-accent p-5 rounded-xl shadow-xl shadow-card/60", className)}>
       {children}
     </ContainerElement>
   );
