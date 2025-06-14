@@ -1,8 +1,8 @@
 [package]
 name = "vrc-browser-chat-server"
 version = "0.1.0"
-description = "A Tauri App"
-authors = ["you"]
+description = "A Tauri application that serves a web application for sending chat messages to VRChat."
+authors = ["kanaru0928"]
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
