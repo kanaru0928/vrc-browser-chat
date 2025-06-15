@@ -1,6 +1,7 @@
-import { useForm } from "react-hook-form";
-import { InferType, number, object } from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { useForm } from "react-hook-form";
+import { number, object } from "yup";
+import { Button } from "./ui/button";
 import {
   Form,
   FormControl,
@@ -10,7 +11,6 @@ import {
   FormLabel,
 } from "./ui/form";
 import { Input } from "./ui/input";
-import { Button } from "./ui/button";
 
 export function ServerRestartForm() {
   const schema = object({
@@ -25,7 +25,7 @@ export function ServerRestartForm() {
     resolver: yupResolver(schema),
   });
 
-  const onSubmit = (data: InferType<typeof schema>) => {};
+  const onSubmit = () => {};
 
   return (
     <Form {...form}>
