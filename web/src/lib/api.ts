@@ -1,22 +1,36 @@
-import { Schema } from "yup";
+import { InferType, object, Schema, string } from "yup";
 
 type Method = "GET" | "POST" | "PUT" | "DELETE";
 
-export interface Endpoint<T extends Method> {
+interface Endpoint<T extends Method> {
   url: string;
   method: T;
-  query: Schema;
   body?: T extends "POST" | "PUT" ? Schema : never;
 }
 
+export const statusEndpoint = {
+  url: "/api",
+  method: "GET",
+} satisfies Endpoint<"GET">;
 
-export async function fetcher<T extends Method>(endpoint: Endpoint<T>) {
+export const chatboxEndpoint = {
+  url: "/api/chatbox",
+  method: "POST",
+  body: object({
+    text: string(),
+  }),
+} satisfies Endpoint<"POST">;
+
+export async function fetcher<T extends Method, E extends Endpoint<T>>(
+  endpoint: E,
+  body: E["body"] extends Schema ? InferType<E["body"]> : never
+) {
   const response = await fetch(endpoint.url, {
     method: endpoint.method,
     headers: {
       "Content-Type": "application/json",
     },
-    body: endpoint.body ? JSON.stringify(endpoint.body) : undefined,
+    body: body ? JSON.stringify(body) : undefined,
   });
 
   if (!response.ok) {

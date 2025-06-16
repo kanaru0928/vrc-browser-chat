@@ -1,5 +1,6 @@
 import { Chatbox } from "@/components/chatbox";
 import { Container } from "@/components/container";
+import { SendForm } from "@/components/send-form";
 import { Status } from "@/components/status";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -14,11 +15,7 @@ export default function Home() {
       </div>
       <div className="w-xl max-w-full flex flex-col">
         <Container className="flex gap-2 items-end">
-          <Textarea placeholder="Type your message here..." />
-          <Button>
-            <Send size={16} />
-            Send
-          </Button>
+          <SendForm />
         </Container>
       </div>
       <div className="w-xl max-w-full flex flex-col">
