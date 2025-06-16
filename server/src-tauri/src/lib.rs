@@ -127,7 +127,7 @@ pub fn run() {
             let app_handle = app.handle().clone();
             let base_path = app_handle
                 .path()
-                .resolve("_up_", BaseDirectory::Resource)
+                .resolve("_up_/_up_", BaseDirectory::Resource)
                 .unwrap();
             let serve_dir = ServeDir::new(base_path.join("web/out"))
                 .not_found_service(ServeFile::new(base_path.join("web/out/index.html")));
