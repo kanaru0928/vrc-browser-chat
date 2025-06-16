@@ -1,7 +1,11 @@
 "use client";
 
-import { object, string } from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { Send } from "lucide-react";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+import { InferType, object, string } from "yup";
+import { Button } from "./ui/button";
 import {
   Form,
   FormDescription,
@@ -10,18 +14,43 @@ import {
   FormLabel,
 } from "./ui/form";
 import { Textarea } from "./ui/textarea";
-import { Button } from "./ui/button";
-import { Send } from "lucide-react";
-import { useForm } from "react-hook-form";
 
-export function SendForm() {
+interface SendFormValues {
+  onSend?: (text: string) => void;
+}
+
+export function SendForm({ onSend = () => {} }: SendFormValues) {
   const schema = object({
     text: string().required("Message is required"),
   });
 
-  const form = useForm({ resolver: yupResolver(schema) });
+  const form = useForm({
+    resolver: yupResolver(schema),
+    defaultValues: { text: "" },
+  });
 
-  const onSubmit = () => {};
+  const onSubmit = async (data: InferType<typeof schema>) => {
+    const response = await fetch("/api/chatbox", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ text: data.text }),
+    });
+    if (!response.ok) {
+      toast.error("Failed to send message", {
+        action: {
+          label: "Close",
+          onClick: () => {
+            toast.dismiss();
+          },
+        },
+      });
+      return;
+    }
+    onSend(data.text);
+    form.reset();
+  };
 
   return (
     <Form {...form}>
@@ -37,6 +66,12 @@ export function SendForm() {
                   <Textarea
                     placeholder="Type your message here..."
                     {...field}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) {
+                        e.preventDefault();
+                        form.handleSubmit(onSubmit)();
+                      }
+                    }}
                   />
                 </FormItem>
               )}

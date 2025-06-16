@@ -9,10 +9,7 @@ import { Button } from "./ui/button";
 import { Skeleton } from "./ui/skeleton";
 
 export function Status() {
-  const { error, isLoading, mutate } = useSWR<{ status: "ok" }>(
-    "/api",
-    fetcher
-  );
+  const { error, isLoading, mutate } = useSWR("/api", fetcher);
 
   return (
     <div>

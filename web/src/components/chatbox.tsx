@@ -3,7 +3,7 @@ import { formatISO9075 } from "date-fns";
 import { ComponentProps } from "react";
 
 interface ChatboxProps extends ComponentProps<"div"> {
-  date: Date;
+  date?: Date;
 }
 
 export function Chatbox({ className, children, date, ...props }: ChatboxProps) {
@@ -16,7 +16,9 @@ export function Chatbox({ className, children, date, ...props }: ChatboxProps) {
       {...props}
     >
       <div className="flex-1">{children}</div>
-      <div className="text-xs text-muted-foreground">{formatISO9075(date)}</div>
+      <div className="text-xs text-muted-foreground">
+        {date && formatISO9075(date)}
+      </div>
     </div>
   );
 }
