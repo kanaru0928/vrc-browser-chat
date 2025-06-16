@@ -2,9 +2,6 @@ import { Chatbox } from "@/components/chatbox";
 import { Container } from "@/components/container";
 import { Status } from "@/components/status";
 import { Button } from "@/components/ui/button";
-import { Card, CardHeader } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { Textarea } from "@/components/ui/textarea";
 import { Send } from "lucide-react";
 
@@ -24,24 +21,23 @@ export default function Home() {
           </Button>
         </Container>
       </div>
-      <div className="w-xl max-w-full flex">
-        <Container className="flex-1">
-          <ScrollArea className="h-96">
-            <div className="h-full flex flex-col gap-2 justify-end">
-              <Chatbox>Hello, world! 1</Chatbox>
-              <Chatbox>Hello, world! 2</Chatbox>
-              <Chatbox>Hello, world! 3</Chatbox>
-              <Chatbox>Hello, world! 1</Chatbox>
-              <Chatbox>Hello, world! 2</Chatbox>
-              <Chatbox>Hello, world! 3</Chatbox>
-              <Chatbox>Hello, world! 1</Chatbox>
-              <Chatbox>Hello, world! 2</Chatbox>
-              <Chatbox>Hello, world! 3</Chatbox>
-              <Chatbox>Hello, world! 1</Chatbox>
-              <Chatbox>Hello, world! 2</Chatbox>
-              <Chatbox>Hello, world! 3</Chatbox>
-            </div>
-          </ScrollArea>
+      <div className="w-xl max-w-full flex flex-col">
+        <Container className="flex-1 flex flex-col">
+          <div className="h-full flex flex-col gap-2 justify-end">
+            <Chatbox date={new Date()}>
+              Hello, world! 1aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+            </Chatbox>
+            <Chatbox date={new Date()}>Hello, world! 2</Chatbox>
+            <Chatbox date={new Date()}>Hello, world! 3</Chatbox>
+            <Chatbox date={new Date()}>Hello, world! 1</Chatbox>
+            <Chatbox date={new Date()}>Hello, world! 2</Chatbox>
+            <Chatbox date={new Date()}>Hello, world! 3</Chatbox>
+            <Chatbox date={new Date()}>Hello, world! 1</Chatbox>
+            <Chatbox date={new Date()}>Hello, world! 2</Chatbox>
+            <Chatbox date={new Date()}>Hello, world! 3</Chatbox>
+            <Chatbox date={new Date()}>Hello, world! 1</Chatbox>
+            <Chatbox date={new Date()}>Hello, world! 2</Chatbox>
+          </div>
         </Container>
       </div>
     </div>
