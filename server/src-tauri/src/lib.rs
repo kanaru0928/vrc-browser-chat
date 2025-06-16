@@ -116,7 +116,7 @@ async fn api_root() -> impl IntoResponse {
     builder
         .status(StatusCode::OK)
         .header("Content-Type", "application/json")
-        .body(Body::from(r#"{"message": "Hello, API!"}"#))
+        .body(Body::from(r#"{"status": "OK"}"#))
         .unwrap()
 }
 

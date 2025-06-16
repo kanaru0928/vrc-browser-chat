@@ -2,9 +2,6 @@ import { Chatbox } from "@/components/chatbox";
 import { Container } from "@/components/container";
 import { SendForm } from "@/components/send-form";
 import { Status } from "@/components/status";
-import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
-import { Send } from "lucide-react";
 
 export default function Home() {
   return (
@@ -14,15 +11,13 @@ export default function Home() {
         <Status />
       </div>
       <div className="w-xl max-w-full flex flex-col">
-        <Container className="flex gap-2 items-end">
-          <SendForm />
-        </Container>
+        <SendForm />
       </div>
       <div className="w-xl max-w-full flex flex-col">
         <Container className="flex-1 flex flex-col">
           <div className="h-full flex flex-col gap-2 justify-end">
             <Chatbox date={new Date()}>
-              Hello, world! 1aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+              Hello, world! 1 aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
             </Chatbox>
             <Chatbox date={new Date()}>Hello, world! 2</Chatbox>
             <Chatbox date={new Date()}>Hello, world! 3</Chatbox>

@@ -1,3 +1,5 @@
+"use client";
+
 import { object, string } from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import {
@@ -23,26 +25,35 @@ export function SendForm() {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-        <FormField
-          control={form.control}
-          name="text"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Text</FormLabel>
-              <Textarea placeholder="Type your message here..." {...field} />
-              {form.formState.errors.text && (
-                <FormDescription className="text-destructive">
-                  {form.formState.errors.text.message}
-                </FormDescription>
+      <form onSubmit={form.handleSubmit(onSubmit)}>
+        <div className="flex gap-2 items-end">
+          <div className="flex-1">
+            <FormField
+              control={form.control}
+              name="text"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Text</FormLabel>
+                  <Textarea
+                    placeholder="Type your message here..."
+                    {...field}
+                  />
+                </FormItem>
               )}
-            </FormItem>
-          )}
-        />
-        <Button>
-          <Send size={16} />
-          Send
-        </Button>
+            />
+          </div>
+          <div>
+            <Button>
+              <Send size={16} />
+              Send
+            </Button>
+          </div>
+        </div>
+        {form.formState.errors.text && (
+          <FormDescription className="text-destructive">
+            {form.formState.errors.text.message}
+          </FormDescription>
+        )}
       </form>
     </Form>
   );
