@@ -17,13 +17,24 @@ export function ServerStatus() {
   });
 
   useListenEvent("server-error", (event: { error: string }) => {
-    toast.error(`Server error: ${event.error}`);
+    toast.error(`Server error: ${event.error}`, {
+      action: {
+        label: "Close",
+        onClick: () => toast.dismiss(),
+      },
+    });
     setServerUrl(null);
   });
 
   const handleCopyClick = async () => {
     if (serverUrl) {
       await navigator.clipboard.writeText(serverUrl);
+      toast.success("Server URL copied to clipboard", {
+        action: {
+          label: "Close",
+          onClick: () => toast.dismiss(),
+        },
+      });
     }
   };
 
@@ -80,6 +91,7 @@ export function ServerStatus() {
               variant="outline"
               disabled={!serverUrl}
               onClick={handleCopyClick}
+              className="cursor-pointer"
             >
               <Copy size={16} />
               Copy

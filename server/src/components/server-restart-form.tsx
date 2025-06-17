@@ -61,7 +61,9 @@ export function ServerRestartForm() {
             </FormItem>
           )}
         />
-        <Button type="submit">Restart</Button>
+        <Button type="submit" className="cursor-pointer">
+          Restart
+        </Button>
       </form>
     </Form>
   );

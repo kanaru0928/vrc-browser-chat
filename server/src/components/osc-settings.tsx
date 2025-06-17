@@ -107,7 +107,7 @@ export function OscSettings() {
         </div>
         <div className="flex gap-2">
           <Button
-            className="flex-1 bg-emerald-300 hover:bg-emerald-300/90"
+            className="flex-1 bg-emerald-300 hover:bg-emerald-300/90 cursor-pointer"
             disabled={!!sendingPortError || isConnected || isConnectionLoading}
             onClick={handleStartClick}
           >
@@ -115,7 +115,7 @@ export function OscSettings() {
             Start
           </Button>
           <Button
-            className="flex-1 bg-destructive hover:bg-destructive/90"
+            className="flex-1 bg-destructive hover:bg-destructive/90 cursor-pointer"
             disabled={!!sendingPortError || !isConnected || isConnectionLoading}
             onClick={handleStopClick}
           >

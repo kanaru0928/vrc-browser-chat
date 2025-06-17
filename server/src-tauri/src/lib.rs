@@ -171,7 +171,7 @@ async fn web_start_server(
     });
 
     tauri::async_runtime::spawn(async move {
-        start_server(app_handler_clone, shutdown_receiver, server_manager_clone).await;
+        let _ = start_server(app_handler_clone, shutdown_receiver, server_manager_clone).await;
     });
 
     match local_ip() {
