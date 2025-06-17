@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "release": "semantic-release",
-    "prepare": "husky"
+    "prepare": "husky",
+    "lint": "pnpm -r lint"
   },
   "devDependencies": {
     "@commitlint/cli": "^19.6.0",
