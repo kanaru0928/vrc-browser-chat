@@ -5,7 +5,7 @@ import {
 } from "@/lib/commands";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form";
-import { number, object } from "yup";
+import { InferType, number, object } from "yup";
 import { Button } from "./ui/button";
 import {
   Form,
@@ -31,9 +31,14 @@ export function ServerRestartForm() {
     resolver: yupResolver(schema),
   });
 
-  const onSubmit = async () => {
-    await invokeCommand(webStopServerCommand, {});
-    await invokeCommand(webStartServerCommand, {});
+  const onSubmit = async (data: InferType<typeof schema>) => {
+    try {
+      await invokeCommand(webStopServerCommand, {});
+    } finally {
+      await invokeCommand(webStartServerCommand, {
+        port: data.port,
+      });
+    }
   };
 
   return (

@@ -4,6 +4,7 @@ import { Container } from "./components/container";
 import { OscSettings } from "./components/osc-settings";
 import { ServerStatus } from "./components/server-status";
 import { ThemeProvider } from "./components/theme-provider";
+import { Toaster } from "./components/ui/sonner";
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
           </Container>
         </div>
       </main>
+      <Toaster position="top-left" />
     </ThemeProvider>
   );
 }

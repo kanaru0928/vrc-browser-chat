@@ -1,14 +1,12 @@
 import { useListenEvent } from "@/hooks/use-listen-event";
-import {
-  invokeCommand,
-  webStartServerCommand
-} from "@/lib/commands";
+import { invokeCommand, webStartServerCommand } from "@/lib/commands";
 import { CheckCircle2, Copy, ExternalLink, XCircle } from "lucide-react";
 import { useEffect, useState } from "react";
 import { ServerRestartForm } from "./server-restart-form";
 import { Alert } from "./ui/alert";
 import { Button } from "./ui/button";
 import { Separator } from "./ui/separator";
+import { toast } from "sonner";
 
 export function ServerStatus() {
   const [serverUrl, setServerUrl] = useState<string | null>(null);
@@ -18,6 +16,11 @@ export function ServerStatus() {
     setServerUrl(event.url);
   });
 
+  useListenEvent("server-error", (event: { error: string }) => {
+    toast.error(`Server error: ${event.error}`);
+    setServerUrl(null);
+  });
+
   const handleCopyClick = async () => {
     if (serverUrl) {
       await navigator.clipboard.writeText(serverUrl);
@@ -25,7 +28,13 @@ export function ServerStatus() {
   };
 
   useEffect(() => {
-    invokeCommand(webStartServerCommand, {});
+    invokeCommand(webStartServerCommand, {
+      port: 11087,
+    }).then((result) => {
+      if (result?.url) {
+        setServerUrl(result.url);
+      }
+    });
   }, []);
 
   return (
