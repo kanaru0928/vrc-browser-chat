@@ -18,6 +18,7 @@ use local_ip_address::local_ip;
 use rosc::OscType;
 use serde::{Deserialize, Serialize};
 use tauri::{path::BaseDirectory, AppHandle, Emitter, Manager, State};
+use tauri_plugin_updater::UpdaterExt;
 use tokio::sync::oneshot;
 use tower_http::services::{ServeDir, ServeFile};
 
@@ -230,6 +231,68 @@ async fn web_stop_server(
     stop_server(app_handler, &server_manager).await
 }
 
+#[tauri::command]
+async fn check_for_updates(app: AppHandle) -> Result<bool, String> {
+    match app.updater() {
+        Ok(updater) => {
+            match updater.check().await {
+                Ok(Some(update)) => {
+                    println!("Update available: {}", update.version);
+                    Ok(true)
+                }
+                Ok(None) => {
+                    println!("No update available");
+                    Ok(false)
+                }
+                Err(e) => {
+                    eprintln!("Failed to check for updates: {}", e);
+                    Err(format!("Failed to check for updates: {}", e))
+                }
+            }
+        }
+        Err(e) => {
+            eprintln!("Failed to get updater: {}", e);
+            Err(format!("Failed to get updater: {}", e))
+        }
+    }
+}
+
+#[tauri::command]
+async fn install_update(app: AppHandle) -> Result<(), String> {
+    match app.updater() {
+        Ok(updater) => {
+            match updater.check().await {
+                Ok(Some(update)) => {
+                    println!("Installing update: {}", update.version);
+                    match update.download_and_install(|chunk_length, content_length| {
+                        println!("Downloaded {} of {:?} bytes", chunk_length, content_length);
+                    }, || {
+                        println!("Download finished");
+                    }).await {
+                        Ok(_) => {
+                            println!("Update installed successfully");
+                            Ok(())
+                        }
+                        Err(e) => {
+                            eprintln!("Failed to install update: {}", e);
+                            Err(format!("Failed to install update: {}", e))
+                        }
+                    }
+                }
+                Ok(None) => Err("No update available".to_string()),
+                Err(e) => {
+                    eprintln!("Failed to check for updates: {}", e);
+                    Err(format!("Failed to check for updates: {}", e))
+                }
+            }
+        }
+        Err(e) => {
+            eprintln!("Failed to get updater: {}", e);
+            Err(format!("Failed to get updater: {}", e))
+        }
+    }
+}
+
 async fn start_server(
     app_handler: AppHandle,
     shutdown_receiver: oneshot::Receiver<()>,
@@ -351,6 +414,7 @@ async fn api_root() -> impl IntoResponse {
 pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_opener::init())
+        .plugin(tauri_plugin_updater::Builder::new().build())
         .manage(OscState(Mutex::new(None)))
         .manage(ServerManager {
             is_running: Arc::new(Mutex::new(false)),
@@ -363,7 +427,9 @@ pub fn run() {
             osc_disconnect,
             osc_send_chatbox,
             web_start_server,
-            web_stop_server
+            web_stop_server,
+            check_for_updates,
+            install_update
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
