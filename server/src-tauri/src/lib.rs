@@ -57,6 +57,7 @@ struct ServerStatusUpdatedEvent {
     url: String,
 }
 
+
 #[tauri::command]
 fn osc_connect(
     address: String,
@@ -137,6 +138,7 @@ async fn web_start_server(
     let mut is_running = server_manager.is_running.lock().unwrap();
 
     if *is_running {
+        println!("Web server is already running");
         return Ok(ServerStatusUpdatedEvent {
             url: server_manager
                 .url
@@ -147,17 +149,79 @@ async fn web_start_server(
         });
     }
 
-    tauri::async_runtime::spawn(async move {});
+    *is_running = true;
+    drop(is_running);
 
-    Ok(())
+    let (shutdown_sender, shutdown_receiver) = oneshot::channel();
+    *server_manager.shutdown_sender.lock().unwrap() = Some(shutdown_sender);
+
+    let app_handler_clone = app_handler.clone();
+    let server_manager_clone = Arc::new(ServerManager {
+        is_running: server_manager.is_running.clone(),
+        shutdown_sender: server_manager.shutdown_sender.clone(),
+        url: server_manager.url.clone(),
+    });
+
+    tauri::async_runtime::spawn(async move {
+        start_server(app_handler_clone, shutdown_receiver, server_manager_clone).await;
+    });
+
+    match local_ip() {
+        Ok(ip) => {
+            let url = format!("http://{}:11087", ip);
+            *server_manager.url.lock().unwrap() = Some(url.clone());
+            Ok(ServerStatusUpdatedEvent { url })
+        }
+        Err(e) => {
+            *server_manager.is_running.lock().unwrap() = false;
+            Err(format!("Failed to get local IP address: {}", e))
+        }
+    }
+}
+
+async fn stop_server(
+    app_handler: AppHandle,
+    server_manager: &ServerManager,
+) -> Result<(), String> {
+    let mut is_running = server_manager.is_running.lock().unwrap();
+    
+    if !*is_running {
+        return Err("Server is not running".to_string());
+    }
+
+    if let Some(sender) = server_manager.shutdown_sender.lock().unwrap().take() {
+        if sender.send(()).is_ok() {
+            *is_running = false;
+            *server_manager.url.lock().unwrap() = None;
+            
+            if let Err(e) = app_handler.emit("server-status-updated", ServerStatusUpdatedEvent {
+                url: "".to_string(),
+            }) {
+                eprintln!("Failed to emit server status updated event: {}", e);
+            }
+            
+            Ok(())
+        } else {
+            Err("Failed to send shutdown signal".to_string())
+        }
+    } else {
+        Err("No shutdown sender available".to_string())
+    }
 }
 
 #[tauri::command]
-async fn web_stop_server(app_handler: AppHandle) -> Result<(), String> {
-    Ok(())
+async fn web_stop_server(
+    app_handler: AppHandle,
+    server_manager: State<'_, ServerManager>,
+) -> Result<(), String> {
+    stop_server(app_handler, &server_manager).await
 }
 
-async fn start_server(app_handler: AppHandle, shutdown_reciver: oneshot::Receiver<()>) {
+async fn start_server(
+    app_handler: AppHandle,
+    shutdown_receiver: oneshot::Receiver<()>,
+    server_manager: Arc<ServerManager>,
+) {
     let base_path = app_handler
         .path()
         .resolve("_up_/_up_", BaseDirectory::Resource)
@@ -199,12 +263,18 @@ async fn start_server(app_handler: AppHandle, shutdown_reciver: oneshot::Receive
     }
 
     axum::serve(listener, app)
+        .with_graceful_shutdown(async {
+            shutdown_receiver.await.ok();
+        })
         .await
         .map_err(|e| {
             eprintln!("Server error: {}", e);
-            std::process::exit(1);
         })
-        .unwrap();
+        .unwrap_or(());
+
+    *server_manager.is_running.lock().unwrap() = false;
+    *server_manager.url.lock().unwrap() = None;
+    println!("Web server stopped");
 }
 
 fn send_chatbox(text: String, osc: &Osc) {
@@ -260,12 +330,14 @@ pub fn run() {
         .manage(ServerManager {
             is_running: Arc::new(Mutex::new(false)),
             shutdown_sender: Arc::new(Mutex::new(None)),
+            url: Arc::new(Mutex::new(None)),
         })
         .invoke_handler(tauri::generate_handler![
             osc_connect,
             osc_disconnect,
             osc_send_chatbox,
-            web_start_server
+            web_start_server,
+            web_stop_server
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

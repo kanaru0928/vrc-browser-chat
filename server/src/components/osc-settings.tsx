@@ -1,4 +1,4 @@
-import { useListenEvent } from "@/hooks/useListenEvent";
+import { useListenEvent } from "@/hooks/use-listen-event";
 import {
   invokeCommand,
   oscConnectCommand,

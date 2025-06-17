@@ -5,7 +5,7 @@ import { Send } from "lucide-react";
 import { ChangeEvent, useEffect, useState } from "react";
 import { Button } from "./ui/button";
 import { Textarea } from "./ui/textarea";
-import { useListenEvent } from "@/hooks/useListenEvent";
+import { useListenEvent } from "@/hooks/use-listen-event";
 
 export function ChatHistory() {
   const [text, setText] = useState("");

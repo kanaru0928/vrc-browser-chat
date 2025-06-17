@@ -1,11 +1,14 @@
+import { useListenEvent } from "@/hooks/use-listen-event";
+import {
+  invokeCommand,
+  webStartServerCommand
+} from "@/lib/commands";
 import { CheckCircle2, Copy, ExternalLink, XCircle } from "lucide-react";
+import { useEffect, useState } from "react";
+import { ServerRestartForm } from "./server-restart-form";
 import { Alert } from "./ui/alert";
 import { Button } from "./ui/button";
 import { Separator } from "./ui/separator";
-import { ServerRestartForm } from "./server-restart-form";
-import { useListenEvent } from "@/hooks/useListenEvent";
-import { useEffect, useState } from "react";
-import { invokeCommand, webStartServerCommand } from "@/lib/commands";
 
 export function ServerStatus() {
   const [serverUrl, setServerUrl] = useState<string | null>(null);

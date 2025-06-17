@@ -1,3 +1,8 @@
+import {
+  invokeCommand,
+  webStartServerCommand,
+  webStopServerCommand,
+} from "@/lib/commands";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form";
 import { number, object } from "yup";
@@ -11,7 +16,6 @@ import {
   FormLabel,
 } from "./ui/form";
 import { Input } from "./ui/input";
-import { HoverCard, HoverCardContent, HoverCardTrigger } from "./ui/hover-card";
 
 export function ServerRestartForm() {
   const schema = object({
@@ -19,14 +23,18 @@ export function ServerRestartForm() {
       .typeError("Port must be a number")
       .required("Port is required")
       .min(1, "Port must be greater than 0")
-      .max(65535, "Port must be less than or equal to 65535"),
+      .max(65535, "Port must be less than or equal to 65535")
+      .default(11087),
   });
 
   const form = useForm({
     resolver: yupResolver(schema),
   });
 
-  const onSubmit = () => {};
+  const onSubmit = async () => {
+    await invokeCommand(webStopServerCommand, {});
+    await invokeCommand(webStartServerCommand, {});
+  };
 
   return (
     <Form {...form}>
@@ -48,16 +56,7 @@ export function ServerRestartForm() {
             </FormItem>
           )}
         />
-        <HoverCard>
-          <HoverCardTrigger>
-            <Button type="submit" disabled>
-              Restart
-            </Button>
-          </HoverCardTrigger>
-          <HoverCardContent>
-            <p>Sorry, this feature is not yet implemented.</p>
-          </HoverCardContent>
-        </HoverCard>
+        <Button type="submit">Restart</Button>
       </form>
     </Form>
   );

@@ -32,6 +32,11 @@ export const webStartServerCommand = {
   args: object({}),
 };
 
+export const webStopServerCommand = {
+  command: "web_stop_server",
+  args: object({}),
+};
+
 export async function invokeCommand<T extends Command>(
   command: T,
   args: InferType<T["args"]>
