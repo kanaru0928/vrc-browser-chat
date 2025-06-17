@@ -1,0 +1,28 @@
+{
+  "name": "vrc-browser-chat",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "release": "semantic-release",
+    "prepare": "husky"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^19.6.0",
+    "@commitlint/config-conventional": "^19.6.0",
+    "@semantic-release/changelog": "^6.0.3",
+    "@semantic-release/git": "^10.0.1",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.1.2",
+    "semantic-release": "^24.2.5"
+  },
+  "lint-staged": {
+    "server/src/**/*.{js,jsx,ts,tsx}": [
+      "cd server && pnpm eslint --fix",
+      "cd server && pnpm prettier --write"
+    ],
+    "web/src/**/*.{js,jsx,ts,tsx}": [
+      "cd web && pnpm eslint --fix",
+      "cd web && pnpm prettier --write"
+    ]
+  }
+}
