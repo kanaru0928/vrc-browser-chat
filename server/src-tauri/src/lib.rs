@@ -4,7 +4,7 @@ use std::{net::SocketAddr, sync::Mutex};
 
 use axum::{
     body::Body,
-    extract::{State as AxumState},
+    extract::State as AxumState,
     http::{Request, Response, StatusCode},
     middleware::from_fn,
     response::IntoResponse,
@@ -13,7 +13,7 @@ use axum::{
 };
 use rosc::OscType;
 use serde::{Deserialize, Serialize};
-use tauri::{AppHandle, Emitter, State};
+use tauri::{path::BaseDirectory, AppHandle, Emitter, Manager, State};
 use tower_http::services::{ServeDir, ServeFile};
 
 use crate::osc::Osc;
@@ -116,7 +116,7 @@ async fn api_root() -> impl IntoResponse {
     builder
         .status(StatusCode::OK)
         .header("Content-Type", "application/json")
-        .body(Body::from(r#"{"message": "Hello, API!"}"#))
+        .body(Body::from(r#"{"status": "OK"}"#))
         .unwrap()
 }
 
@@ -125,14 +125,20 @@ pub fn run() {
     tauri::Builder::default()
         .setup(|app| {
             let app_handle = app.handle().clone();
-            let serve_dir = ServeDir::new("../web/out")
-                .not_found_service(ServeFile::new("../web/out/404.html"));
+            let base_path = app_handle
+                .path()
+                .resolve("_up_/_up_", BaseDirectory::Resource)
+                .unwrap();
+            let serve_dir = ServeDir::new(base_path.join("web/out"))
+                .not_found_service(ServeFile::new(base_path.join("web/out/index.html")));
 
             tauri::async_runtime::spawn(async move {
                 let app = Router::new()
                     .route("/api", get(api_root))
                     .route("/api/chatbox", post(api_chatbox))
-                    .with_state(AppState { app_handle: app_handle })
+                    .with_state(AppState {
+                        app_handle: app_handle,
+                    })
                     .fallback_service(
                         axum::routing::get_service(serve_dir).layer(from_fn(on_request)),
                     );
