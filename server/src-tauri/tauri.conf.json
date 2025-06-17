@@ -34,5 +34,15 @@
     "resources": [
       "../../web/out"
     ]
+  },
+  "plugins": {
+    "updater": {
+      "active": true,
+      "endpoints": [
+        "https://github.com/kanaru0928/vrc-browser-chat/releases/latest/download/latest.json"
+      ],
+      "dialog": true,
+      "pubkey": ""
+    }
   }
 }

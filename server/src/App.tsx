@@ -4,7 +4,7 @@ import { Container } from "./components/container";
 import { OscSettings } from "./components/osc-settings";
 import { ServerStatus } from "./components/server-status";
 import { ThemeProvider } from "./components/theme-provider";
-import { Button } from "./components/ui/button";
+import { VersionButton } from "./components/version-button";
 import { Toaster } from "./components/ui/sonner";
 
 function App() {
@@ -24,9 +24,7 @@ function App() {
                 <div>VRC Browser Chat</div>
                 <div>&copy; 2025 kanaru</div>
               </div>
-              <Button variant="ghost" className="cursor-pointer">
-                v{import.meta.env.VITE_APP_VERSION}
-              </Button>
+              <VersionButton />
             </Container>
           </div>
           <Container className="flex-1 space-y-4">

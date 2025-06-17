@@ -42,6 +42,16 @@ export const webStopServerCommand = {
   args: object({}),
 } satisfies Command;
 
+export const checkForUpdatesCommand = {
+  command: "check_for_updates",
+  args: object({}),
+} satisfies Command;
+
+export const installUpdateCommand = {
+  command: "install_update",
+  args: object({}),
+} satisfies Command;
+
 export async function invokeCommand<T extends Command>(
   command: T,
   args: InferType<T["args"]>
