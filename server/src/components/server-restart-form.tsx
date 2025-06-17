@@ -1,6 +1,11 @@
+import {
+  invokeCommand,
+  webStartServerCommand,
+  webStopServerCommand,
+} from "@/lib/commands";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form";
-import { number, object } from "yup";
+import { InferType, number, object } from "yup";
 import { Button } from "./ui/button";
 import {
   Form,
@@ -18,14 +23,23 @@ export function ServerRestartForm() {
       .typeError("Port must be a number")
       .required("Port is required")
       .min(1, "Port must be greater than 0")
-      .max(65535, "Port must be less than or equal to 65535"),
+      .max(65535, "Port must be less than or equal to 65535")
+      .default(11087),
   });
 
   const form = useForm({
     resolver: yupResolver(schema),
   });
 
-  const onSubmit = () => {};
+  const onSubmit = async (data: InferType<typeof schema>) => {
+    try {
+      await invokeCommand(webStopServerCommand, {});
+    } finally {
+      await invokeCommand(webStartServerCommand, {
+        port: data.port,
+      });
+    }
+  };
 
   return (
     <Form {...form}>
@@ -47,7 +61,9 @@ export function ServerRestartForm() {
             </FormItem>
           )}
         />
-        <Button type="submit">Restart</Button>
+        <Button type="submit" className="cursor-pointer">
+          Restart
+        </Button>
       </form>
     </Form>
   );

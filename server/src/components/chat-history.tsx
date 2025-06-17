@@ -5,6 +5,7 @@ import { Send } from "lucide-react";
 import { ChangeEvent, useEffect, useState } from "react";
 import { Button } from "./ui/button";
 import { Textarea } from "./ui/textarea";
+import { useListenEvent } from "@/hooks/use-listen-event";
 
 export function ChatHistory() {
   const [text, setText] = useState("");
@@ -26,35 +27,17 @@ export function ChatHistory() {
     await invokeCommand(oscSendChatboxCommand, {
       text,
     });
-    setHistory((prev) => [
-      ...prev,
-      `[${formatISO9075(new Date())}] ${text}`,
-    ]);
+    setHistory((prev) => [...prev, `[${formatISO9075(new Date())}] ${text}`]);
   };
 
-  useEffect(() => {
-    let already_unmounted = false;
-    let unlisten = () => {};
-    (async () => {
-      const unlistenEvent = await listen<{ text: string }>(
-        "chatbox",
-        (event) => {
-          handleSend(event.payload.text);
-        }
-      );
-
-      if (!already_unmounted) {
-        unlisten = unlistenEvent;
-      } else {
-        unlistenEvent();
-      }
-    })();
-
-    return () => {
-      already_unmounted = true;
-      unlisten();
-    };
-  }, []);
+  useListenEvent("chatbox-updated", (event: { text: string }) => {
+    if (event.text.trim() !== "") {
+      setHistory((prev) => [
+        ...prev,
+        `[${formatISO9075(new Date())}] ${event.text}`,
+      ]);
+    }
+  });
 
   return (
     <div className="flex flex-col h-full space-y-4">

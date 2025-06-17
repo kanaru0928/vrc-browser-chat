@@ -28,14 +28,6 @@ impl Osc {
         self.port
     }
 
-    pub fn set_address(&mut self, address: String) {
-        self.address = address;
-    }
-
-    pub fn set_port(&mut self, port: u16) {
-        self.port = port;
-    }
-
     pub fn connect(&self) -> Result<(), String> {
         match self
             .socket

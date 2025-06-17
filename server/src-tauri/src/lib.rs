@@ -1,6 +1,9 @@
 mod osc;
 
-use std::{net::SocketAddr, sync::Mutex};
+use std::{
+    net::SocketAddr,
+    sync::{Arc, Mutex},
+};
 
 use axum::{
     body::Body,
@@ -11,14 +14,23 @@ use axum::{
     routing::{get, post},
     Json, Router,
 };
+use local_ip_address::local_ip;
 use rosc::OscType;
 use serde::{Deserialize, Serialize};
 use tauri::{path::BaseDirectory, AppHandle, Emitter, Manager, State};
+use tokio::sync::oneshot;
 use tower_http::services::{ServeDir, ServeFile};
 
 use crate::osc::Osc;
 
 struct OscState(pub Mutex<Option<Osc>>);
+
+struct ServerManager {
+    is_running: Arc<Mutex<bool>>,
+    shutdown_sender: Arc<Mutex<Option<oneshot::Sender<()>>>>,
+    url: Arc<Mutex<Option<String>>>,
+    port: Arc<Mutex<u16>>,
+}
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 struct ApiChatboxPost {
@@ -36,21 +48,61 @@ struct ApiResponse {
     message: String,
 }
 
-#[tauri::command]
-fn osc_connect(address: String, port: u16, state: State<OscState>) -> Result<(), String> {
-    let address_clone = address.clone();
-    let osc = Osc::new(address, port);
-    osc.connect()
-        .map_err(|e| format!("Failed to connect to OSC server: {}", e))?;
-    println!("Connected to OSC server at {}:{}", address_clone, port);
+#[derive(Debug, Clone, Serialize, Deserialize)]
+struct OscUpdatedEvent {
+    status: String,
+}
 
-    *state.0.lock().unwrap() = Some(osc);
+#[derive(Debug, Clone, Serialize, Deserialize)]
+struct ServerStatusUpdatedEvent {
+    url: String,
+}
 
-    Ok(())
+#[derive(Debug, Clone, Serialize, Deserialize)]
+struct ServerErrorEvent {
+    error: String,
 }
 
 #[tauri::command]
-fn osc_disconnect(state: State<OscState>) -> Result<(), String> {
+fn osc_connect(
+    address: String,
+    port: u16,
+    state: State<OscState>,
+    app_handler: AppHandle,
+) -> Result<(), String> {
+    let address_clone = address.clone();
+    let osc = Osc::new(address, port);
+    match osc.connect() {
+        Ok(_) => {
+            println!("Connected to OSC server at {}:{}", address_clone, port);
+            *state.0.lock().unwrap() = Some(osc);
+            app_handler
+                .emit(
+                    "osc-updated",
+                    OscUpdatedEvent {
+                        status: "Connected".into(),
+                    },
+                )
+                .unwrap();
+            Ok(())
+        }
+        Err(e) => {
+            eprintln!("Failed to connect to OSC server: {}", e);
+            app_handler
+                .emit(
+                    "osc-updated",
+                    OscUpdatedEvent {
+                        status: "Disconnected".into(),
+                    },
+                )
+                .unwrap();
+            Err(format!("Failed to connect to OSC server: {}", e))
+        }
+    }
+}
+
+#[tauri::command]
+fn osc_disconnect(state: State<OscState>, app_handler: AppHandle) -> Result<(), String> {
     let mut osc_state = state.0.lock().unwrap();
     if let Some(osc) = osc_state.take() {
         println!(
@@ -58,6 +110,14 @@ fn osc_disconnect(state: State<OscState>) -> Result<(), String> {
             osc.get_address(),
             osc.get_port()
         );
+        app_handler
+            .emit(
+                "osc-updated",
+                OscUpdatedEvent {
+                    status: "Disconnected".into(),
+                },
+            )
+            .unwrap();
         Ok(())
     } else {
         Err("No OSC connection to disconnect".to_string())
@@ -73,6 +133,173 @@ fn osc_send_chatbox(text: String, state: State<OscState>) -> Result<(), String> 
     } else {
         Err("OSC connection not established".to_string())
     }
+}
+
+#[tauri::command]
+async fn web_start_server(
+    port: u16,
+    server_manager: State<'_, ServerManager>,
+    app_handler: AppHandle,
+) -> Result<ServerStatusUpdatedEvent, String> {
+    let mut is_running = server_manager.is_running.lock().unwrap();
+
+    if *is_running {
+        println!("Web server is already running");
+        return Ok(ServerStatusUpdatedEvent {
+            url: server_manager
+                .url
+                .lock()
+                .unwrap()
+                .clone()
+                .unwrap_or_default(),
+        });
+    }
+
+    *is_running = true;
+    *server_manager.port.lock().unwrap() = port;
+    drop(is_running);
+
+    let (shutdown_sender, shutdown_receiver) = oneshot::channel();
+    *server_manager.shutdown_sender.lock().unwrap() = Some(shutdown_sender);
+
+    let app_handler_clone = app_handler.clone();
+    let server_manager_clone = Arc::new(ServerManager {
+        is_running: server_manager.is_running.clone(),
+        shutdown_sender: server_manager.shutdown_sender.clone(),
+        url: server_manager.url.clone(),
+        port: server_manager.port.clone(),
+    });
+
+    tauri::async_runtime::spawn(async move {
+        let _ = start_server(app_handler_clone, shutdown_receiver, server_manager_clone).await;
+    });
+
+    match local_ip() {
+        Ok(ip) => {
+            let url = format!("http://{}:{}", ip, port);
+            *server_manager.url.lock().unwrap() = Some(url.clone());
+            Ok(ServerStatusUpdatedEvent { url })
+        }
+        Err(e) => {
+            *server_manager.is_running.lock().unwrap() = false;
+            Err(format!("Failed to get local IP address: {}", e))
+        }
+    }
+}
+
+async fn stop_server(app_handler: AppHandle, server_manager: &ServerManager) -> Result<(), String> {
+    let mut is_running = server_manager.is_running.lock().unwrap();
+
+    if !*is_running {
+        return Err("Server is not running".to_string());
+    }
+
+    if let Some(sender) = server_manager.shutdown_sender.lock().unwrap().take() {
+        if sender.send(()).is_ok() {
+            *is_running = false;
+            *server_manager.url.lock().unwrap() = None;
+
+            if let Err(e) = app_handler.emit(
+                "server-status-updated",
+                ServerStatusUpdatedEvent {
+                    url: server_manager
+                        .url
+                        .lock()
+                        .unwrap()
+                        .clone()
+                        .unwrap_or_default(),
+                },
+            ) {
+                eprintln!("Failed to emit server status updated event: {}", e);
+            }
+
+            Ok(())
+        } else {
+            Err("Failed to send shutdown signal".to_string())
+        }
+    } else {
+        Err("No shutdown sender available".to_string())
+    }
+}
+
+#[tauri::command]
+async fn web_stop_server(
+    app_handler: AppHandle,
+    server_manager: State<'_, ServerManager>,
+) -> Result<(), String> {
+    stop_server(app_handler, &server_manager).await
+}
+
+async fn start_server(
+    app_handler: AppHandle,
+    shutdown_receiver: oneshot::Receiver<()>,
+    server_manager: Arc<ServerManager>,
+) -> Result<(), String> {
+    let port = *server_manager.port.lock().unwrap();
+    let base_path = app_handler
+        .path()
+        .resolve("_up_/_up_", BaseDirectory::Resource)
+        .unwrap();
+    let serve_dir = ServeDir::new(base_path.join("web/out"))
+        .not_found_service(ServeFile::new(base_path.join("web/out/index.html")));
+
+    let app = Router::new()
+        .route("/api", get(api_root))
+        .route("/api/chatbox", post(api_chatbox))
+        .with_state(AppState {
+            app_handle: app_handler.clone(),
+        })
+        .fallback_service(axum::routing::get_service(serve_dir).layer(from_fn(on_request)));
+    let addr = SocketAddr::from(([0, 0, 0, 0], port));
+
+    let listener = match tokio::net::TcpListener::bind(addr).await {
+        Ok(l) => l,
+        Err(e) => {
+            eprintln!("Failed to bind to address {}: {}", addr, e);
+            app_handler
+                .emit(
+                    "server-error",
+                    ServerErrorEvent {
+                        error: e.to_string(),
+                    },
+                )
+                .unwrap();
+            return Err(format!("Failed to bind to address {}: {}", addr, e));
+        }
+    };
+
+    match local_ip() {
+        Ok(ip) => {
+            let url = format!("http://{}:{}", ip, port);
+            let url_for_print = url.clone();
+            if let Err(e) =
+                app_handler.emit("server-status-updated", ServerStatusUpdatedEvent { url })
+            {
+                eprintln!("Failed to emit server status update: {}", e);
+            }
+            println!("Server URL: {}", url_for_print);
+        }
+        Err(e) => {
+            eprintln!("Failed to get local IP address: {}", e);
+            return Err(format!("Failed to get local IP address: {}", e));
+        }
+    }
+
+    axum::serve(listener, app)
+        .with_graceful_shutdown(async {
+            shutdown_receiver.await.ok();
+        })
+        .await
+        .map_err(|e| {
+            eprintln!("Server error: {}", e);
+        })
+        .unwrap_or(());
+
+    *server_manager.is_running.lock().unwrap() = false;
+    *server_manager.url.lock().unwrap() = None;
+    println!("Web server stopped");
+
+    Ok(())
 }
 
 fn send_chatbox(text: String, osc: &Osc) {
@@ -123,54 +350,20 @@ async fn api_root() -> impl IntoResponse {
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
-        .setup(|app| {
-            let app_handle = app.handle().clone();
-            let base_path = app_handle
-                .path()
-                .resolve("_up_/_up_", BaseDirectory::Resource)
-                .unwrap();
-            let serve_dir = ServeDir::new(base_path.join("web/out"))
-                .not_found_service(ServeFile::new(base_path.join("web/out/index.html")));
-
-            tauri::async_runtime::spawn(async move {
-                let app = Router::new()
-                    .route("/api", get(api_root))
-                    .route("/api/chatbox", post(api_chatbox))
-                    .with_state(AppState {
-                        app_handle: app_handle,
-                    })
-                    .fallback_service(
-                        axum::routing::get_service(serve_dir).layer(from_fn(on_request)),
-                    );
-                let addr = SocketAddr::from(([0, 0, 0, 0], 11087));
-
-                let listener = match tokio::net::TcpListener::bind(addr).await {
-                    Ok(l) => l,
-                    Err(e) => {
-                        eprintln!("Failed to bind to address {}: {}", addr, e);
-                        std::process::exit(1);
-                    }
-                };
-
-                println!("Server running at http://{}", addr);
-
-                axum::serve(listener, app)
-                    .await
-                    .map_err(|e| {
-                        eprintln!("Server error: {}", e);
-                        std::process::exit(1);
-                    })
-                    .unwrap();
-            });
-
-            Ok(())
-        })
         .plugin(tauri_plugin_opener::init())
         .manage(OscState(Mutex::new(None)))
+        .manage(ServerManager {
+            is_running: Arc::new(Mutex::new(false)),
+            shutdown_sender: Arc::new(Mutex::new(None)),
+            url: Arc::new(Mutex::new(None)),
+            port: Arc::new(Mutex::new(11087)),
+        })
         .invoke_handler(tauri::generate_handler![
             osc_connect,
             osc_disconnect,
             osc_send_chatbox,
+            web_start_server,
+            web_stop_server
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
