@@ -11,6 +11,7 @@ import {
   FormLabel,
 } from "./ui/form";
 import { Input } from "./ui/input";
+import { HoverCard, HoverCardContent, HoverCardTrigger } from "./ui/hover-card";
 
 export function ServerRestartForm() {
   const schema = object({
@@ -47,7 +48,16 @@ export function ServerRestartForm() {
             </FormItem>
           )}
         />
-        <Button type="submit">Restart</Button>
+        <HoverCard>
+          <HoverCardTrigger>
+            <Button type="submit" disabled>
+              Restart
+            </Button>
+          </HoverCardTrigger>
+          <HoverCardContent>
+            <p>Sorry, this feature is not yet implemented.</p>
+          </HoverCardContent>
+        </HoverCard>
       </form>
     </Form>
   );

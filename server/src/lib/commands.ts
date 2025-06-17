@@ -27,6 +27,11 @@ export const oscDisconnectCommand = {
   args: object({}),
 } satisfies Command;
 
+export const webStartServerCommand = {
+  command: "web_start_server",
+  args: object({}),
+};
+
 export async function invokeCommand<T extends Command>(
   command: T,
   args: InferType<T["args"]>
