@@ -106,8 +106,11 @@ Tauri bundles the static files from `web/out/` into the desktop app.
 vrc-browser-chat/
 ├── .commitlintrc.json # Commitlint configuration
 ├── .editorconfig # Editor configuration
+├── .husky/ # Git hooks configuration
+│   ├── pre-commit # Pre-commit hook (runs lint-staged)
+│   └── commit-msg # Commit message hook (runs commitlint)
 ├── .releaserc.json # Semantic-release configuration
-├── package.json # Root package.json with dev dependencies
+├── package.json # Root package.json with dev dependencies and lint-staged config
 ├── pnpm-workspace.yaml # pnpm workspace configuration
 ├── server/ # Tauri desktop app
 │   ├── src-tauri/ # Rust backend
@@ -140,9 +143,20 @@ vrc-browser-chat/
 - Server and Web Interface can be developed independently  
 - OSC settings must match VRChat's configuration  
 - Building the Tauri app may require system-specific setup  
-- Commit messages must follow Conventional Commits format for semantic-release to work  
+- Commit messages must follow Conventional Commits format for semantic-release to work
+- Git hooks automatically run linting and formatting on commit (husky + lint-staged)  
 
-## Release Management
+## Code Quality & Release Management
+
+### Git Hooks (Husky + Lint-Staged)
+
+This project uses husky and lint-staged to enforce code quality:
+
+- **Pre-commit**: Automatically runs ESLint and Prettier on staged files
+- **Commit-msg**: Validates commit messages against Conventional Commits format
+- **Configuration**: Located in `.husky/` directory and `package.json`
+
+### Automated Releases (Semantic Release)
 
 This project uses semantic-release for automated versioning and releases:
 
