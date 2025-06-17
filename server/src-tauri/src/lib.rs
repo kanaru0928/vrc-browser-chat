@@ -36,21 +36,37 @@ struct ApiResponse {
     message: String,
 }
 
-#[tauri::command]
-fn osc_connect(address: String, port: u16, state: State<OscState>) -> Result<(), String> {
-    let address_clone = address.clone();
-    let osc = Osc::new(address, port);
-    osc.connect()
-        .map_err(|e| format!("Failed to connect to OSC server: {}", e))?;
-    println!("Connected to OSC server at {}:{}", address_clone, port);
-
-    *state.0.lock().unwrap() = Some(osc);
-
-    Ok(())
+#[derive(Debug, Clone, Serialize, Deserialize)]
+struct OscUpdatedEvent {
+    status: String,
 }
 
 #[tauri::command]
-fn osc_disconnect(state: State<OscState>) -> Result<(), String> {
+fn osc_connect(
+    address: String,
+    port: u16,
+    state: State<OscState>,
+    app_handler: AppHandle,
+) -> Result<(), String> {
+    let address_clone = address.clone();
+    let osc = Osc::new(address, port);
+    match osc.connect() {
+        Ok(_) => {
+            println!("Connected to OSC server at {}:{}", address_clone, port);
+            *state.0.lock().unwrap() = Some(osc);
+            app_handler.emit("osc-updated", OscUpdatedEvent { status: "Connected".into() }).unwrap();
+            Ok(())
+        }
+        Err(e) => {
+            eprintln!("Failed to connect to OSC server: {}", e);
+            app_handler.emit("osc-updated", OscUpdatedEvent { status: "Disconnected".into() }).unwrap();
+            Err(format!("Failed to connect to OSC server: {}", e))
+        }
+    }
+}
+
+#[tauri::command]
+fn osc_disconnect(state: State<OscState>, app_handler: AppHandle) -> Result<(), String> {
     let mut osc_state = state.0.lock().unwrap();
     if let Some(osc) = osc_state.take() {
         println!(
@@ -58,6 +74,7 @@ fn osc_disconnect(state: State<OscState>) -> Result<(), String> {
             osc.get_address(),
             osc.get_port()
         );
+        app_handler.emit("osc-updated", OscUpdatedEvent { status: "Disconnected".into() }).unwrap();
         Ok(())
     } else {
         Err("No OSC connection to disconnect".to_string())

@@ -7,7 +7,7 @@ import { ThemeProvider } from "./components/theme-provider";
 
 function App() {
   return (
-    <ThemeProvider>
+    <ThemeProvider defaultTheme="dark">
       <main className="bg-background min-h-screen p-4 flex flex-col gap-2">
         <Container className="space-y-4">
           <ServerStatus />

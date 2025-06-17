@@ -1,13 +1,22 @@
-import { number, ValidationError } from "yup";
-import { Input } from "./ui/input";
-import { ChangeEvent, useState } from "react";
-import { Button } from "./ui/button";
-import { Play, Square } from "lucide-react";
+import { useListenEvent } from "@/hooks/useListenEvent";
 import {
   invokeCommand,
   oscConnectCommand,
   oscDisconnectCommand,
 } from "@/lib/commands";
+import {
+  CheckCircle2,
+  CircleX,
+  LoaderCircle,
+  Play,
+  Square,
+} from "lucide-react";
+import { ChangeEvent, useState } from "react";
+import { number, ValidationError } from "yup";
+import { Button } from "./ui/button";
+import { Input } from "./ui/input";
+import { Alert } from "./ui/alert";
+import { Skeleton } from "./ui/skeleton";
 
 export function OscSettings() {
   const portSchema = number()
@@ -18,6 +27,14 @@ export function OscSettings() {
 
   const [sendingPort, setSendingPort] = useState<number>(9000);
   const [sendingPortError, setSendingPortError] = useState<string | null>(null);
+  const [isConnected, setIsConnected] = useState<boolean>(false);
+  const [isConnectionLoading, setIsConnectionLoading] =
+    useState<boolean>(false);
+
+  useListenEvent("osc-updated", (event: { status: string }) => {
+    setIsConnected(event.status === "Connected");
+    setIsConnectionLoading(false);
+  });
 
   const handleSendingPortChange = (e: ChangeEvent<HTMLInputElement>) => {
     try {
@@ -36,24 +53,43 @@ export function OscSettings() {
       return;
     }
 
+    setIsConnectionLoading(true);
+
     const result = await invokeCommand(oscConnectCommand, {
       address: "127.0.0.1",
       port: sendingPort,
     });
-    
+
     console.log("OSC connection result:", result);
   };
 
   const handleStopClick = () => {
     const result = invokeCommand(oscDisconnectCommand, {});
     console.log("OSC disconnection result:", result);
+    setIsConnectionLoading(true);
   };
 
   return (
     <>
       <h2 className="text-xl font-bold">OSC</h2>
       <div className="space-y-2">
-        <h3 className="font-semibold">Sending</h3>
+        <h3 className="font-semibold">Send</h3>
+        {isConnectionLoading ? (
+          <Alert>
+            <LoaderCircle size={16} className="animate-spin" />
+            <Skeleton className="w-24 h-4 my-0.5" />
+          </Alert>
+        ) : isConnected ? (
+          <Alert className="text-emerald-300">
+            <CheckCircle2 size={16} />
+            Connected
+          </Alert>
+        ) : (
+          <Alert variant="destructive">
+            <CircleX size={16} />
+            Not connected
+          </Alert>
+        )}
         <div>
           <div className="flex items-baseline gap-2">
             <label className="block text-sm mb-1">Port</label>
@@ -72,7 +108,7 @@ export function OscSettings() {
         <div className="flex gap-2">
           <Button
             className="flex-1 bg-emerald-300 hover:bg-emerald-300/90"
-            disabled={!!sendingPortError}
+            disabled={!!sendingPortError || isConnected || isConnectionLoading}
             onClick={handleStartClick}
           >
             <Play className="fill-current" strokeWidth={0} />
@@ -80,7 +116,7 @@ export function OscSettings() {
           </Button>
           <Button
             className="flex-1 bg-destructive hover:bg-destructive/90"
-            disabled={!!sendingPortError}
+            disabled={!!sendingPortError || !isConnected || isConnectionLoading}
             onClick={handleStopClick}
           >
             <Square className="fill-current" strokeWidth={0} />
