@@ -4,6 +4,8 @@
 
 VRC Browser Chat is an application that enables chat communication between VRChat and a web browser. It uses the OSC (Open Sound Control) protocol to communicate with VRChat and provides a modern web interface.
 
+**Platform Support**: This application currently supports Windows only.
+
 ## Architecture
 
 This project consists of two main components:
@@ -51,6 +53,13 @@ VITE_APP_VERSION=0.1.0
 
 ### Development Commands
 
+#### Root Project Commands
+
+```bash
+pnpm install # Install all dependencies for workspace
+pnpm release # Create semantic release
+```
+
 #### Server (Tauri) Development
 
 ```bash
@@ -95,6 +104,11 @@ Tauri bundles the static files from `web/out/` into the desktop app.
 
 ```text
 vrc-browser-chat/
+├── .commitlintrc.json # Commitlint configuration
+├── .editorconfig # Editor configuration
+├── .releaserc.json # Semantic-release configuration
+├── package.json # Root package.json with dev dependencies
+├── pnpm-workspace.yaml # pnpm workspace configuration
 ├── server/ # Tauri desktop app
 │   ├── src-tauri/ # Rust backend
 │   │   ├── src/
@@ -126,6 +140,16 @@ vrc-browser-chat/
 - Server and Web Interface can be developed independently  
 - OSC settings must match VRChat's configuration  
 - Building the Tauri app may require system-specific setup  
+- Commit messages must follow Conventional Commits format for semantic-release to work  
+
+## Release Management
+
+This project uses semantic-release for automated versioning and releases:
+
+- **Commit Format**: Follow [Conventional Commits](https://www.conventionalcommits.org/) specification
+- **Automatic Releases**: Releases are triggered on the `main` branch via GitHub Actions
+- **Version Management**: Versions are automatically determined based on commit messages
+- **Changelog**: Automatically generated and updated with each release
 
 ## Troubleshooting
 
