@@ -1,4 +1,12 @@
+import { useAppVersion } from "@/hooks/use-app-version";
 import { useState } from "react";
+import { toast } from "sonner";
+import {
+  checkForUpdatesCommand,
+  installUpdateCommand,
+  invokeCommand,
+} from "../lib/commands";
+import { Alert, AlertDescription } from "./ui/alert";
 import { Button } from "./ui/button";
 import {
   Dialog,
@@ -7,13 +15,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from "./ui/dialog";
-import { Alert, AlertDescription } from "./ui/alert";
-import { toast } from "sonner";
-import {
-  checkForUpdatesCommand,
-  installUpdateCommand,
-  invokeCommand,
-} from "../lib/commands";
 
 export function VersionButton() {
   const [isUpdateDialogOpen, setIsUpdateDialogOpen] = useState(false);
@@ -66,6 +67,8 @@ export function VersionButton() {
     }
   };
 
+  const { appVersion } = useAppVersion();
+
   return (
     <>
       <Button
@@ -73,7 +76,7 @@ export function VersionButton() {
         className="cursor-pointer"
         onClick={handleVersionClick}
       >
-        v{import.meta.env.VITE_APP_VERSION}
+        v{appVersion}
       </Button>
 
       <Dialog open={isUpdateDialogOpen} onOpenChange={setIsUpdateDialogOpen}>
@@ -81,7 +84,7 @@ export function VersionButton() {
           <DialogHeader>
             <DialogTitle>アップデート確認</DialogTitle>
             <DialogDescription>
-              現在のバージョン: v{import.meta.env.VITE_APP_VERSION}
+              現在のバージョン: v{appVersion}
             </DialogDescription>
           </DialogHeader>
 
