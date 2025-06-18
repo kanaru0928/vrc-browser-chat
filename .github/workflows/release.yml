@@ -93,10 +93,18 @@ jobs:
           cd web
           pnpm build
 
-      - name: Build Tauri app
-        run: |
-          cd server
-          pnpm tauri build
+      - name: Upload build artifacts to release
+        uses: tauri-apps/tauri-action@v0
+        with:
+          tagName: v${{ steps.get_version.outputs.version }}
+          releaseName: Release v${{ steps.get_version.outputs.version }}
+          releaseBody: 'See the assets to download this version and install.'
+          releaseDraft: false
+          prerelease: false
+          includeUpdaterJson: true
+          projectPath: ./server
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
