@@ -55,7 +55,7 @@ export function ServerRestartForm() {
               </FormControl>
               {form.formState.errors.port && (
                 <FormDescription className="text-destructive">
-                  {form.formState.errors.port.message}
+                  {form.formState.errors.port?.message as string}
                 </FormDescription>
               )}
             </FormItem>
