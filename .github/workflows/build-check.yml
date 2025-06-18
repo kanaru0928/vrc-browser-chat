@@ -3,6 +3,11 @@ name: Build Check
 on:
   pull_request:
     branches: [main]
+    paths:
+      - "web/**"
+      - "server/**"
+      - ".github/workflows/build-check.yml"
+
   workflow_dispatch:
 
 jobs:
