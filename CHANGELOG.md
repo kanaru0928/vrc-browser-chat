@@ -1,3 +1,10 @@
+## [1.0.1](https://github.com/kanaru0928/vrc-browser-chat/compare/v1.0.0...v1.0.1) (2025-06-18)
+
+
+### Bug Fixes
+
+* add permissions for issues in release workflow ([cbea03a](https://github.com/kanaru0928/vrc-browser-chat/commit/cbea03a5ddf505f858adbd565c539a90d435ecc9))
+
 # 1.0.0 (2025-06-18)
 
 
