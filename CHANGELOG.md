@@ -1,3 +1,10 @@
+## [1.0.2](https://github.com/kanaru0928/vrc-browser-chat/compare/v1.0.1...v1.0.2) (2025-06-18)
+
+
+### Bug Fixes
+
+* update release workflow to upload build artifacts with version tagging ([03b94ff](https://github.com/kanaru0928/vrc-browser-chat/commit/03b94ff10bdc2124a1c5e8d9fc36961d50606e29))
+
 ## [1.0.1](https://github.com/kanaru0928/vrc-browser-chat/compare/v1.0.0...v1.0.1) (2025-06-18)
 
 
