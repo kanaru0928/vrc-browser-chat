@@ -1,0 +1,101 @@
+name: Release
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    outputs:
+      released: ${{ steps.release.outputs.released }}
+      version: ${{ steps.release.outputs.version }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: latest
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: "pnpm"
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Run semantic-release
+        id: release
+        run: |
+          pnpm release
+          echo "released=$(git tag --list | tail -1 | wc -l)" >> $GITHUB_OUTPUT
+          echo "version=$(git describe --tags --abbrev=0 2>/dev/null || echo 'v0.0.0')" >> $GITHUB_OUTPUT
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  build:
+    needs: release
+    if: needs.release.outputs.released == '1'
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: latest
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: "pnpm"
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Get latest version
+        id: get_version
+        run: |
+          $version = git describe --tags --abbrev=0
+          $version_number = $version -replace '^v', ''
+          echo "VERSION=$version_number" >> $env:GITHUB_ENV
+          echo "version=$version_number" >> $env:GITHUB_OUTPUT
+        shell: pwsh
+
+      - name: Create server .env file
+        run: |
+          echo "VITE_APP_VERSION=${{ steps.get_version.outputs.version }}" > server/.env
+        shell: pwsh
+
+      - name: Build web app
+        run: |
+          cd web
+          pnpm build
+
+      - name: Build Tauri app
+        run: |
+          cd server
+          pnpm tauri build
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: tauri-build-${{ steps.get_version.outputs.version }}
+          path: |
+            server/src-tauri/target/release/bundle/
+          retention-days: 30

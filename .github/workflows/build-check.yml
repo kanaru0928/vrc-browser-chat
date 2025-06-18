@@ -35,9 +35,7 @@ jobs:
         run: pnpm install
 
       - name: Lint and format check
-        run: |
-          cd web && pnpm lint
-          cd ../server && pnpm lint
+        run: pnpm lint
 
       - name: Build web app
         run: |

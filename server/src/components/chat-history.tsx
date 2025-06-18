@@ -1,11 +1,10 @@
+import { useListenEvent } from "@/hooks/use-listen-event";
 import { invokeCommand, oscSendChatboxCommand } from "@/lib/commands";
-import { listen } from "@tauri-apps/api/event";
 import { formatISO9075 } from "date-fns";
 import { Send } from "lucide-react";
-import { ChangeEvent, useEffect, useState } from "react";
+import { ChangeEvent, useState } from "react";
 import { Button } from "./ui/button";
 import { Textarea } from "./ui/textarea";
-import { useListenEvent } from "@/hooks/use-listen-event";
 
 export function ChatHistory() {
   const [text, setText] = useState("");
