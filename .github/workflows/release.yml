@@ -13,7 +13,6 @@ jobs:
   semantic-release:
     runs-on: ubuntu-latest
     outputs:
-      new-release-published: ${{ steps.semantic-release.outputs.new-release-published }}
       new-release-version: ${{ steps.semantic-release.outputs.new-release-version }}
     steps:
       - name: Checkout code
@@ -48,17 +47,20 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Get latest tag
+        id: get-latest-tag
+        run: echo "new-release-version=$(git describe --tags --abbrev=0)" >> $GITHUB_OUTPUT
+
   build:
     needs: semantic-release
     runs-on: windows-latest
-    if: needs.semantic-release.outputs.new-release-published == 'true'
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          ref: v${{ needs.semantic-release.outputs.new-release-version }}
+          ref: ${{ needs.semantic-release.outputs.new-release-version }}
 
       - name: Setup Rust
         uses: dtolnay/rust-toolchain@stable
