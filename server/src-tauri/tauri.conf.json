@@ -31,7 +31,9 @@
       "icons/icon.icns",
       "icons/icon.ico"
     ],
-    "resources": ["../../web/out"]
+    "resources": [
+      "../../web/out"
+    ]
   },
   "plugins": {
     "updater": {
