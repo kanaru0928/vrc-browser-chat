@@ -49,7 +49,7 @@ You can now enter messages from your browser and send them to VRChat!
 
 ## 🤝 Contributing
 
-Pull requests and issue reports are welcome! For detailed developer information, please check [CONTRIBUTING.md](docs/CONTRIBUTING.md).
+Pull requests and issue reports are welcome! For detailed developer information, please check [CONTRIBUTING_EN.md](docs/CONTRIBUTING_EN.md).
 
 ## 📄 License
 

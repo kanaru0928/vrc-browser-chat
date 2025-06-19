@@ -192,6 +192,26 @@ graph TB
 
 **Important**: The server (Tauri) app references static files built by the Web interface (`web/out/` directory). For production builds, you must first build the Web app, then build the Tauri app.
 
+## Local Build
+
+### Building the Web App
+
+```bash
+cd web
+pnpm build
+```
+
+Static files will be output to the `web/out/` directory.
+
+### Building the Tauri App
+
+```bash
+cd server
+pnpm tauri build
+```
+
+The built executable will be created in the `server/src-tauri/target/release/bundle/` directory.
+
 ## Release Process
 
 This project uses semantic-release for automated releases:
@@ -215,4 +235,3 @@ By contributing, you agree that your contributions will be distributed under the
 ---
 
 We look forward to your contributions! 🎉
-
