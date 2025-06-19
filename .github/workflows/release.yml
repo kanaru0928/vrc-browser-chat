@@ -43,7 +43,6 @@ jobs:
 
   build:
     needs: semantic-release
-    if: needs.semantic-release.outputs.new-release-published == 'true'
     runs-on: windows-latest
 
     steps:
