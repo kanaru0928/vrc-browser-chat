@@ -1,6 +1,6 @@
 # VRC Browser Chat
 
-*English | [日本語](README.md)*
+_English | [日本語](README.md)_
 
 A modern application that allows you to send VRChat chat messages from a web browser.
 
@@ -26,13 +26,12 @@ A modern application that allows you to send VRChat chat messages from a web bro
 
 ### 1. Installation
 
-Download and install the latest version from the [releases page](https://github.com/yourusername/vrc-browser-chat/releases).
+Download and install the latest version from the [releases page](https://github.com/kanaru0928/vrc-browser-chat/releases).
 
 ### 2. VRChat Configuration
 
 1. Launch VRChat
-2. Enable "OSC" from the settings menu
-3. Verify port settings (default: 9000)
+2. Enable "OSC" from the avatar menu
 
 ### 3. Launch the App
 
@@ -53,11 +52,11 @@ Pull requests and issue reports are welcome! For detailed developer information,
 
 ## 📄 License
 
-This project is released under the [MIT License](LICENSE).
+This project is released under the [GPL-3.0](LICENSE).
 
 ## 🙋‍♂️ Support
 
-- 🐛 Bug reports・💡 Feature requests: [Issues](https://github.com/kanaru0928/vrc-browser-chat/issues)
+- 🐛 Bug reports / 💡 Feature requests: [Issues](https://github.com/kanaru0928/vrc-browser-chat/issues)
 
 ---
 

@@ -26,13 +26,12 @@ VRChatでのチャットをWebブラウザから送信できるモダンなア�
 
 ### 1. インストール
 
-最新版を[リリースページ](https://github.com/yourusername/vrc-browser-chat/releases)からダウンロードしてインストールしてください。
+最新版を[リリースページ](https://github.com/kanaru0928/vrc-browser-chat/releases)からダウンロードしてインストールしてください。
 
 ### 2. VRChatの設定
 
 1. VRChatを起動
-2. 設定メニューから「OSC」を有効化
-3. ポート設定を確認（デフォルト: 9000）
+2. アバターメニューから「OSC」を有効化
 
 ### 3. アプリの起動
 
@@ -53,7 +52,7 @@ VRChatでのチャットをWebブラウザから送信できるモダンなア�
 
 ## 📄 ライセンス
 
-このプロジェクトは[MIT License](LICENSE)の下で公開されています。
+このプロジェクトは[GPL-3.0](LICENSE)の下で公開されています。
 
 ## 🙋‍♂️ サポート
 
