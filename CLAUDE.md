@@ -32,25 +32,6 @@ This project consists of two main components:
 - Rust (For Tauri build)  
 - pnpm (Package manager)  
 
-### Environment Variable Setup
-
-#### Server App Environment Variables (`/server/.env`)
-
-```bash
-# Application version (displayed in the UI)
-VITE_APP_VERSION=0.1.0
-```
-
-#### Configurable Environment Variables
-
-- `VITE_APP_VERSION`: Application version information  
-- `TAURI_DEV_HOST`: Host setting for Tauri in development mode (dev only)  
-
-#### Usage of Environment Variables
-
-- **Version Display**: Displayed in `server/src/components/version-button.tsx`  
-- **Dev Environment**: Vite automatically manages the host for Tauri development mode  
-
 ### Development Commands
 
 #### Root Project Commands
