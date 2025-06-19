@@ -13,7 +13,9 @@ jobs:
   semantic-release:
     runs-on: ubuntu-latest
     outputs:
-      new-release-version: ${{ steps.semantic-release.outputs.new-release-version }}
+      new-release-version: ${{ steps.get-latest-tag.outputs.new-release-version }}
+      release-notes: ${{ steps.get-release-notes.outputs.release-notes }}
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -50,6 +52,19 @@ jobs:
       - name: Get latest tag
         id: get-latest-tag
         run: echo "new-release-version=$(git describe --tags --abbrev=0)" >> $GITHUB_OUTPUT
+
+      - name: Get release notes
+        id: get-release-notes
+        run: |
+          if [ -f CHANGELOG.md ]; then
+            # Extract the latest release notes from CHANGELOG.md
+            release_notes=$(awk '/^## / {if(found) exit; found=1; next} found' CHANGELOG.md | sed '/^$/d')
+            echo "release-notes<<EOF" >> $GITHUB_OUTPUT
+            echo "$release_notes" >> $GITHUB_OUTPUT
+            echo "EOF" >> $GITHUB_OUTPUT
+          else
+            echo "release-notes=Release notes not available" >> $GITHUB_OUTPUT
+          fi
 
   build:
     needs: semantic-release
@@ -103,13 +118,15 @@ jobs:
         with:
           tagName: v__VERSION__
           releaseName: Release v__VERSION__
-          releaseBody: "See the assets to download this version and install."
+          releaseBody: ${{ needs.semantic-release.outputs.release-notes }}
           releaseDraft: false
           prerelease: false
           includeUpdaterJson: true
           projectPath: ./server
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAURI_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
+          TAURI_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
