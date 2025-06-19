@@ -107,6 +107,7 @@ Lint and format are automatically executed before commits.
    - Clearly describe the changes
    - Reference related issues if any
    - Attach screenshots if applicable
+   - Build checks will automatically run after creating pull requests that affect build-related files
 
 ## Issue Reporting
 
