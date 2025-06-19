@@ -1,6 +1,5 @@
 {
   "branches": ["main"],
-  "tagFormat": false,
   "plugins": [
     "@semantic-release/commit-analyzer",
     "@semantic-release/release-notes-generator",
@@ -22,6 +21,7 @@
         ],
         "message": "chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"
       }
-    ]
+    ],
+    ["@semantic-release/github", false]
   ]
 }
