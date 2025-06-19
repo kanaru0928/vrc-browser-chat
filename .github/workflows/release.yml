@@ -14,7 +14,6 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       new-release-version: ${{ steps.get-latest-tag.outputs.new-release-version }}
-      release-notes: ${{ steps.get-release-notes.outputs.release-notes }}
 
     steps:
       - name: Checkout code
@@ -53,19 +52,6 @@ jobs:
         id: get-latest-tag
         run: echo "new-release-version=$(git describe --tags --abbrev=0)" >> $GITHUB_OUTPUT
 
-      - name: Get release notes
-        id: get-release-notes
-        run: |
-          if [ -f CHANGELOG.md ]; then
-            # Extract the latest release notes from CHANGELOG.md
-            release_notes=$(awk '/^## / {if(found) exit; found=1; next} found' CHANGELOG.md | sed '/^$/d')
-            echo "release-notes<<EOF" >> $GITHUB_OUTPUT
-            echo "$release_notes" >> $GITHUB_OUTPUT
-            echo "EOF" >> $GITHUB_OUTPUT
-          else
-            echo "release-notes=Release notes not available" >> $GITHUB_OUTPUT
-          fi
-
   build:
     needs: semantic-release
     runs-on: windows-latest
@@ -80,18 +66,10 @@ jobs:
       - name: Setup Rust
         uses: dtolnay/rust-toolchain@stable
 
-      - name: Cache Rust dependencies
-        uses: actions/cache@v4
+      - name: Rust cache
+        uses: swatinem/rust-cache@v2
         with:
-          path: |
-            ~/.cargo/bin/
-            ~/.cargo/registry/index/
-            ~/.cargo/registry/cache/
-            ~/.cargo/git/db/
-            server/src-tauri/target/
-          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-cargo-
+          workspaces: "./server/src-tauri -> target"
 
       - name: Install pnpm
         uses: pnpm/action-setup@v4
@@ -118,7 +96,7 @@ jobs:
         with:
           tagName: v__VERSION__
           releaseName: Release v__VERSION__
-          releaseBody: ${{ needs.semantic-release.outputs.release-notes }}
+          releaseBody: "See the assets to download this version and install."
           releaseDraft: false
           prerelease: false
           includeUpdaterJson: true
