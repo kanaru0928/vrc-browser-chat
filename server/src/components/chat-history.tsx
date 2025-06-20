@@ -29,15 +29,14 @@ export function ChatHistory() {
     setHistory((prev) => [...prev, `[${formatISO9075(new Date())}] ${text}`]);
   };
 
-  useListenEvent("chatbox-updated", (event: { text: string }) => {
+  useListenEvent("chatbox-updated", async (event: { text: string }) => {
+    await invokeCommand(oscSendChatboxCommand, {
+      text: event.text,
+    });
     setHistory((prev) => [
       ...prev,
       `[${formatISO9075(new Date())}] ${event.text}`,
     ]);
-
-    invokeCommand(oscSendChatboxCommand, {
-      text: event.text,
-    });
   });
 
   return (

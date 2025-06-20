@@ -127,6 +127,8 @@ fn osc_disconnect(state: State<OscState>, app_handler: AppHandle) -> Result<(), 
 
 #[tauri::command]
 fn osc_send_chatbox(text: String, state: State<OscState>) -> Result<(), String> {
+    println!("Sending chatbox message: {}", text);
+    
     let mut osc_state = state.0.lock().unwrap();
     if let Some(osc) = osc_state.as_mut() {
         send_chatbox(text, osc);
@@ -386,7 +388,7 @@ async fn api_chatbox(
     println!("Received message: {:?}", payload);
 
     // Tauriアプリにメッセージを送信
-    match state.app_handle.emit("chatbox", &payload) {
+    match state.app_handle.emit("chatbox-updated", &payload) {
         Ok(_) => {
             println!("Message sent to Tauri app successfully");
             Ok(Json(ApiResponse {
