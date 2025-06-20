@@ -1,0 +1,89 @@
+name: Question / Support (EN)
+description: Template for questions about usage or configuration
+title: "[QUESTION] "
+labels: ["question"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for your question.
+        Please provide the following information for a faster and more accurate response.
+
+  - type: checkboxes
+    id: pre-check
+    attributes:
+      label: Pre-submission Checklist
+      description: Please verify the following before posting your question
+      options:
+        - label: I have checked the README and documentation
+          required: true
+        - label: I have checked that no similar question exists in existing issues
+          required: true
+        - label: I have clearly described my question
+          required: true
+
+  - type: dropdown
+    id: category
+    attributes:
+      label: Question Category
+      description: What type of question is this?
+      options:
+        - Usage / How-to
+        - Settings / Configuration
+        - Installation / Setup
+        - OSC Configuration
+        - VRChat Integration
+        - Troubleshooting
+        - Other
+      default: 0
+    validations:
+      required: true
+
+  - type: textarea
+    id: question
+    attributes:
+      label: Question
+      description: Please describe your question in detail
+      placeholder: |
+        What would you like to know?
+        Please describe the specific situation or what you're having trouble with.
+    validations:
+      required: true
+
+  - type: textarea
+    id: tried
+    attributes:
+      label: What I've Tried
+      description: Please describe anything you've already tried to solve the problem
+      placeholder: |
+        - Changed settings
+        - Restarted the application
+        - Tried alternative methods
+        etc.
+    validations:
+      required: false
+
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment Information
+      description: Please provide details about your environment
+      placeholder: |
+        - OS: Windows 11
+        - Application Version: v1.0.0
+        - VRChat Version: 2024.x.x
+        - Browser: Chrome 120.0.0.0
+        - Other relevant software
+    validations:
+      required: false
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: Additional Information
+      description: Any other information that might help with the answer
+      placeholder: |
+        Screenshots, configuration files, logs, etc.
+        Any information that helps understand the problem.
+    validations:
+      required: false

@@ -1,0 +1,79 @@
+name: Feature Request (EN)
+description: Template for requesting new features
+title: "[FEATURE] "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for submitting a feature request.
+        Detailed information helps us implement better features.
+
+  - type: checkboxes
+    id: pre-check
+    attributes:
+      label: Pre-submission Checklist
+      description: Please verify the following before submitting your feature request
+      options:
+        - label: I have checked that no duplicate request exists
+          required: true
+        - label: I have confirmed this feature is not already implemented
+          required: true
+        - label: I have described the request clearly for others to understand
+          required: true
+
+  - type: textarea
+    id: background
+    attributes:
+      label: Background
+      description: Please describe the reason or background for wanting this feature
+      placeholder: Why do you need this feature? What situation are you facing?
+    validations:
+      required: true
+
+  - type: textarea
+    id: feature
+    attributes:
+      label: Feature Description
+      description: Please describe the desired feature in detail
+      placeholder: |
+        What kind of feature would you like to add?
+        Please include specific behavior or screen images if available.
+        Images or mockups make it easier to understand.
+    validations:
+      required: true
+
+  - type: textarea
+    id: benefits
+    attributes:
+      label: Expected Benefits
+      description: Please describe what positive outcomes this feature implementation would bring
+      placeholder: |
+        - Improved user experience
+        - Better work efficiency
+        - New use cases
+        etc.
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives
+      description: How are you currently handling this without the feature?
+      placeholder: Please describe any current workarounds or alternative methods
+    validations:
+      required: false
+
+  - type: textarea
+    id: remarks
+    attributes:
+      label: Additional Notes
+      description: Any considerations, constraints, or other comments for implementing this feature
+      placeholder: |
+        - Technical constraints
+        - Relationship with other features
+        - Other considerations
+        etc.
+    validations:
+      required: false

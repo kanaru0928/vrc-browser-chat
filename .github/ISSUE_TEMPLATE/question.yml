@@ -1,0 +1,89 @@
+name: 質問・サポート
+description: 使用方法や設定に関する質問のテンプレート
+title: "[QUESTION] "
+labels: ["question"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        質問をお寄せいただきありがとうございます。
+        より迅速で正確な回答のため、以下の情報をご記載ください。
+
+  - type: checkboxes
+    id: pre-check
+    attributes:
+      label: 投稿前のチェック
+      description: 質問を投稿する前に以下の項目を確認してください
+      options:
+        - label: READMEやドキュメントを確認した
+          required: true
+        - label: 既存のissueで同様の質問がないか確認した
+          required: true
+        - label: 質問内容を明確に記載した
+          required: true
+
+  - type: dropdown
+    id: category
+    attributes:
+      label: 質問のカテゴリ
+      description: どのような内容の質問ですか？
+      options:
+        - 使用方法・操作方法
+        - 設定・構成
+        - インストール・セットアップ
+        - OSC設定
+        - VRChat連携
+        - トラブルシューティング
+        - その他
+      default: 0
+    validations:
+      required: true
+
+  - type: textarea
+    id: question
+    attributes:
+      label: 質問内容
+      description: 質問について詳しく記載してください
+      placeholder: |
+        何について知りたいですか？
+        具体的な状況や困っていることを記載してください。
+    validations:
+      required: true
+
+  - type: textarea
+    id: tried
+    attributes:
+      label: 試したこと
+      description: 問題解決のために既に試したことがあれば記載してください
+      placeholder: |
+        - 設定を変更してみた
+        - 再起動してみた
+        - 別の方法を試してみた
+        など
+    validations:
+      required: false
+
+  - type: textarea
+    id: environment
+    attributes:
+      label: 環境情報
+      description: 使用している環境について教えてください
+      placeholder: |
+        - OS: Windows 11
+        - アプリケーションバージョン: v1.0.0
+        - VRChat バージョン: 2024.x.x
+        - ブラウザ: Chrome 120.0.0.0
+        - その他関連するソフトウェア
+    validations:
+      required: false
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: 追加情報
+      description: その他、回答に役立つ情報があれば記載してください
+      placeholder: |
+        スクリーンショット、設定ファイル、ログなど
+        問題の理解に役立つ情報があれば記載してください。
+    validations:
+      required: false

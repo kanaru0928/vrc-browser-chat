@@ -1,0 +1,111 @@
+name: バグレポート
+description: バグの報告や問題を報告するためのテンプレート
+title: "[BUG] "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        バグレポートを提出いただきありがとうございます。
+        詳細な情報をいただくことで、問題の特定と修正を迅速に行うことができます。
+
+  - type: checkboxes
+    id: pre-check
+    attributes:
+      label: 投稿前のチェック
+      description: バグレポートを提出する前に以下の項目を確認してください
+      options:
+        - label: 既存のissueで同様の問題が報告されていないか確認した
+          required: true
+        - label: 最新バージョンで問題が発生することを確認した
+          required: true
+        - label: 問題を再現する手順を明確に記載した
+          required: true
+
+  - type: dropdown
+    id: platform
+    attributes:
+      label: プラットフォーム
+      description: どのプラットフォームで問題が発生しますか？
+      options:
+        - Windows
+        - Web ブラウザ
+        - その他
+      default: 0
+    validations:
+      required: true
+
+  - type: input
+    id: version
+    attributes:
+      label: バージョン
+      description: 使用しているアプリケーションのバージョンを入力してください
+      placeholder: "例: v1.0.0"
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: バグの詳細
+      description: バグについて詳しく説明してください
+      placeholder: どのような問題が発生していますか？
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: 再現手順
+      description: バグを再現するための詳細な手順を記載してください
+      placeholder: |
+        1. '...'をクリック
+        2. '...'を入力
+        3. '...'の画面で問題発生
+        4. エラーが表示される
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: 期待される動作
+      description: 正常に動作する場合はどうなるべきですか？
+      placeholder: どのような動作を期待していましたか？
+    validations:
+      required: true
+
+  - type: textarea
+    id: environment
+    attributes:
+      label: 環境情報
+      description: 使用している環境について詳しく教えてください
+      placeholder: |
+        - OS: Windows 11
+        - VRChat バージョン: 2024.x.x
+        - ブラウザ: Chrome 120.0.0.0
+        - その他関連するソフトウェア
+    validations:
+      required: false
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: ログやエラーメッセージ
+      description: 関連するログやエラーメッセージがあれば貼り付けてください
+      placeholder: |
+        エラーメッセージやログを記載してください
+        ```
+        ここにログを貼り付け
+        ```
+    validations:
+      required: false
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: 追加情報
+      description: その他、問題の解決に役立つ情報があれば記載してください
+      placeholder: スクリーンショット、動画、その他の情報
+    validations:
+      required: false

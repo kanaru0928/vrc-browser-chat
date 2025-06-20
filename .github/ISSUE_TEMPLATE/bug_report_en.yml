@@ -1,0 +1,111 @@
+name: Bug Report (EN)
+description: Template for reporting bugs or issues
+title: "[BUG] "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for submitting a bug report.
+        Detailed information helps us identify and fix issues quickly.
+
+  - type: checkboxes
+    id: pre-check
+    attributes:
+      label: Pre-submission Checklist
+      description: Please verify the following before submitting your bug report
+      options:
+        - label: I have checked that the same issue has not already been reported
+          required: true
+        - label: I have confirmed the issue occurs with the latest version
+          required: true
+        - label: I have provided clear steps to reproduce the issue
+          required: true
+
+  - type: dropdown
+    id: platform
+    attributes:
+      label: Platform
+      description: On which platform does the issue occur?
+      options:
+        - Windows
+        - Web Browser
+        - Other
+      default: 0
+    validations:
+      required: true
+
+  - type: input
+    id: version
+    attributes:
+      label: Version
+      description: Please enter the version of the application you are using
+      placeholder: "e.g.: v1.0.0"
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Bug Description
+      description: Please describe the bug in detail
+      placeholder: What problem are you experiencing?
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Steps to Reproduce
+      description: Please provide detailed steps to reproduce the bug
+      placeholder: |
+        1. Click on '...'
+        2. Enter '...'
+        3. Issue occurs on '...' screen
+        4. Error is displayed
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected Behavior
+      description: What should happen when working correctly?
+      placeholder: What behavior did you expect?
+    validations:
+      required: true
+
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment Information
+      description: Please provide details about your environment
+      placeholder: |
+        - OS: Windows 11
+        - VRChat Version: 2024.x.x
+        - Browser: Chrome 120.0.0.0
+        - Other relevant software
+    validations:
+      required: false
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs or Error Messages
+      description: Please paste any relevant logs or error messages
+      placeholder: |
+        Please include error messages or logs
+        ```
+        Paste logs here
+        ```
+    validations:
+      required: false
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: Additional Information
+      description: Any other information that might help resolve the issue
+      placeholder: Screenshots, videos, or other relevant information
+    validations:
+      required: false
