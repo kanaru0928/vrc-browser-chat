@@ -1,3 +1,18 @@
+# [1.1.0](https://github.com/kanaru0928/vrc-browser-chat/compare/v1.0.0...v1.1.0) (2025-06-20)
+
+
+### Bug Fixes
+
+* add environment variable ([d14657d](https://github.com/kanaru0928/vrc-browser-chat/commit/d14657df8485cb87e86f4d7a8494964a120a4b28))
+* solve double sending ([e30c720](https://github.com/kanaru0928/vrc-browser-chat/commit/e30c7205565ef2a5586042a8883f468aad3ff8cd))
+* update so that  chats will be send ([fc47fc5](https://github.com/kanaru0928/vrc-browser-chat/commit/fc47fc5085cdbf7758285157817bc0f73ebc00dd))
+
+
+### Features
+
+* add issue templates ([75f9717](https://github.com/kanaru0928/vrc-browser-chat/commit/75f97170d6aacbb033dcdf8e7e0d001f805aecc7))
+* add pull request template ([c79c603](https://github.com/kanaru0928/vrc-browser-chat/commit/c79c6032c959462d3210c0a0e3cade83d678e077))
+
 # 1.0.0 (2025-06-19)
 
 
