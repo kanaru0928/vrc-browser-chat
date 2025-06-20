@@ -3,22 +3,28 @@ import { useEffect } from "react";
 
 export function useListenEvent<T>(
   eventName: string,
-  callback: (event: T) => void
+  callback: (event: T) => void | Promise<void>
 ): () => void {
   useEffect(() => {
     let unlisten = () => {};
+    let alreadyUnmounted = false;
 
     const listenEvent = async () => {
-      const unlistenEvent = await listen<T>(eventName, (event) => {
-        callback(event.payload);
+      const unlistenEvent = await listen<T>(eventName, async (event) => {
+        await callback(event.payload);
       });
 
-      unlisten = unlistenEvent;
+      if (alreadyUnmounted) {
+        unlistenEvent();
+      } else {
+        unlisten = unlistenEvent;
+      }
     };
 
     listenEvent();
 
     return () => {
+      alreadyUnmounted = true;
       unlisten();
     };
   }, [eventName, callback]);
