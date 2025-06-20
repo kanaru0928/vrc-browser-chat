@@ -14,10 +14,6 @@ jobs:
   build:
     runs-on: windows-latest
 
-    strategy:
-      matrix:
-        node-version: [20]
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -38,7 +34,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: ${{ matrix.node-version }}
+          node-version: 22
           cache: "pnpm"
 
       - name: Cache pnpm store
@@ -62,3 +58,7 @@ jobs:
       - name: Build Tauri app (including Rust backend)
         run: |
           cd server && pnpm tauri build
+        env:
+          RUST_BACKTRACE: 1
+          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
+          TAURI_SIGNING_KEY_PASSWORD: ""
