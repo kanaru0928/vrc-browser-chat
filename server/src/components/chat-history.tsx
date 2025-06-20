@@ -30,12 +30,14 @@ export function ChatHistory() {
   };
 
   useListenEvent("chatbox-updated", (event: { text: string }) => {
-    if (event.text.trim() !== "") {
-      setHistory((prev) => [
-        ...prev,
-        `[${formatISO9075(new Date())}] ${event.text}`,
-      ]);
-    }
+    setHistory((prev) => [
+      ...prev,
+      `[${formatISO9075(new Date())}] ${event.text}`,
+    ]);
+
+    invokeCommand(oscSendChatboxCommand, {
+      text: event.text,
+    });
   });
 
   return (
