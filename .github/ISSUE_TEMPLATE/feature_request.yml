@@ -1,0 +1,80 @@
+name: 機能要望
+description: 新しい機能の要望のテンプレート
+title: "[FEATURE] "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        機能要望を提出いただきありがとうございます。
+        詳細な情報をいただくことで、より良い機能の実装につながります。
+
+  - type: checkboxes
+    id: pre-check
+    attributes:
+      label: 投稿前のチェック
+      description: 機能要望を提出する前に以下の項目を確認してください
+      options:
+        - label: 重複する要望はないか確認した
+          required: true
+        - label: 既に実装済みでないか確認した
+          required: true
+        - label: 内容は他人に伝わるように記載した
+          required: true
+
+  - type: textarea
+    id: background
+    attributes:
+      label: 要望の背景
+      description: その機能が欲しい理由や背景を記載してください
+      placeholder: なぜこの機能が必要だと思いますか？どのような状況で困っていますか？
+    validations:
+      required: true
+
+  - type: textarea
+    id: feature
+    attributes:
+      label: 要望の機能
+      description: 欲しい機能について詳しく記載してください
+      placeholder: |
+        どのような機能を追加してほしいですか？
+        具体的な動作や画面イメージがあれば記載してください。
+        画像やモックアップなどがあると分かりやすいです。
+    validations:
+      required: true
+
+  - type: textarea
+    id: benefits
+    attributes:
+      label: 期待される効果
+      description: 機能の実装によりどのような良いことが起こるかを記載してください
+      placeholder: |
+        - ユーザー体験の向上
+        - 作業効率の改善
+        - 新しい用途での活用
+        など
+    validations:
+      required: true
+
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: 代替案
+      description: この機能がない場合、現在どのような方法で対処していますか？
+      placeholder: 現在の回避策や代替手段があれば記載してください
+    validations:
+      required: false
+
+  - type: textarea
+    id: remarks
+    attributes:
+      label: 備考
+      description: 機能の実装にあたっての注意点やその他コメントがあれば記載してください
+      placeholder: |
+        - 技術的な制約
+        - 他の機能との関連性
+        - その他の考慮事項
+        など
+    validations:
+      required: false
