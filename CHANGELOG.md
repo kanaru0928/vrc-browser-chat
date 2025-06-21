@@ -1,3 +1,16 @@
+# [1.2.0](https://github.com/kanaru0928/vrc-browser-chat/compare/v1.1.0...v1.2.0) (2025-06-21)
+
+
+### Bug Fixes
+
+* include license in the information dialog ([db826a6](https://github.com/kanaru0928/vrc-browser-chat/commit/db826a6e0cd6aa94e3e8765ae20ea82783f883b9))
+* update title of web interface ([7535841](https://github.com/kanaru0928/vrc-browser-chat/commit/7535841c9b5f03d0eb61fc0b5d033d03288f74f6))
+
+
+### Features
+
+* implement startup update check ([81e8eb6](https://github.com/kanaru0928/vrc-browser-chat/commit/81e8eb6784f66de638a763ffb9cce54e41be6eec))
+
 # [1.1.0](https://github.com/kanaru0928/vrc-browser-chat/compare/v1.0.0...v1.1.0) (2025-06-20)
 
 
