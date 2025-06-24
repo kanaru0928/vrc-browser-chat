@@ -26,7 +26,7 @@ VRChat でのチャットを Web ブラウザから送信できるモダンな�
 
 ### 1. インストール
 
-最新版を[リリースページ](https://github.com/kanaru0928/vrc-browser-chat/releases)からダウンロードしてインストールしてください。
+最新版を[リリースページ](https://github.com/kanaru0928/vrc-browser-chat/releases)か[Booth の商品ページ](https://kanaru0928.booth.pm/items/7065133)からダウンロードしてインストールしてください。
 
 ### 2. VRChat の設定
 
@@ -43,6 +43,7 @@ VRChat でのチャットを Web ブラウザから送信できるモダンな�
    > ⚠️ VRChat 起動後に Start してください
 
 3. **WebServer セクション**の URL にアクセス
+
    - 例: `http://192.168.0.1:11087`
    - 「Open」ボタンで自動的にブラウザが開きます
 
