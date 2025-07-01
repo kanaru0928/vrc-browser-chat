@@ -33,12 +33,6 @@ struct ServerManager {
     port: Arc<Mutex<u16>>,
 }
 
-#[derive(Clone, Serialize)]
-struct Payload {
-    args: Vec<String>,
-    cwd: String,
-}
-
 #[derive(Debug, Clone, Serialize, Deserialize)]
 struct ApiChatboxPost {
     text: String,
@@ -423,7 +417,7 @@ async fn api_root() -> impl IntoResponse {
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
-        .plugin(tauri_plugin_single_instance::init(|app, argv, cwd| {
+        .plugin(tauri_plugin_single_instance::init(|app, _, _| {
             let _ = app
                 .get_webview_window("main")
                 .expect("Failed to get webview window")
