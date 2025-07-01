@@ -1,5 +1,5 @@
 -----------------------------
- VRC Browser Chat (β) v1.2.0
+ VRC Browser Chat (β) v1.2.1
 -----------------------------
 
 ダウンロードいただきありがとうございます！
@@ -25,7 +25,12 @@
 ・質問等もGitHubのIssuesセクションで受け付けています。使い方が分からない場合はTwitterなど、連絡の取りやすい方法でお問い合わせください。
 ・このアプリの使用により利用規約に同意したものとみなされます。詳細な利用規約やライセンスは下記リンクをご確認ください。
 
+■ トラブルシューティング
+紹介・サポートページの「トラブルシューティング」セクションを参照してください。
+https://vrc-browser-chat.kanaru.me/docs/troubleshooting/
+
 ■ リンク
+紹介・サポートページ: https://vrc-browser-chat.kanaru.me
 GitHub: https://github.com/kanaru0928/vrc-browser-chat
 利用規約: https://github.com/kanaru0928/vrc-browser-chat/blob/main/TERMS_OF_USE.md
 ライセンス: https://github.com/kanaru0928/vrc-browser-chat/blob/main/LICENSE
@@ -33,19 +38,12 @@ GitHub: https://github.com/kanaru0928/vrc-browser-chat
 Twitter: https://x.com/kanaru_VRC
 販売ページ: https://kanaru0928.booth.pm/items/7065133
 
-■ トラブルシューティング
-・ブラウザからURLにアクセスできない
-　→ Web ServerセクションにServer is upと表示されていますか？表示されていない場合はRestartボタンをクリックしてサーバーを再起動してください。それでも解決しない場合はPortを11089などに変更して再度試してください。
-　→ ブラウザを操作する端末とデスクトップアプリを実行している端末が同じネットワークに接続されていますか？端末同士は同じネットワークに接続されている必要があります。
-　→ プロキシやファイアウォールが原因でアクセスできない場合があります。ネットワーク管理者に確認してください。
-
-・ブラウザからメッセージが送信されない
-　→ ブラウザに「Server is up」と表示されていますか？表示されていない場合はインストールしたデスクトップアプリを起動してください。
-　→ デスクトップアプリのChat Historyにメッセージが表示されていますか？表示されていない場合はOSCの設定を確認してください。
-　→ OSCはVRChatの起動後にStartしましたか？起動前にStartした場合は一度Stopしてから再度Startしてください。
-
 ■ 更新履歴
-[2025-06-21 v1.2.0] ベータ版リリース
+[2025-07-01 v1.2.1]
+- バグ修正: 多重起動しないように修正
+
+[2025-06-21 v1.2.0]
+- ベータ版リリース
 
 ■ 開発者
 おんやっこ (kanaru0928)
