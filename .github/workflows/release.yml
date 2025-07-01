@@ -1,6 +1,12 @@
 name: Release
 
 on:
+  push:
+    branches: [release]
+    paths:
+      - "web/**"
+      - "server/**"
+      - ".github/workflows/release.yml"
   workflow_dispatch:
 
 permissions:
