@@ -128,7 +128,7 @@ fn osc_disconnect(state: State<OscState>, app_handler: AppHandle) -> Result<(), 
 #[tauri::command]
 fn osc_send_chatbox(text: String, state: State<OscState>) -> Result<(), String> {
     println!("Sending chatbox message: {}", text);
-    
+
     let mut osc_state = state.0.lock().unwrap();
     if let Some(osc) = osc_state.as_mut() {
         send_chatbox(text, osc);
@@ -236,22 +236,20 @@ async fn web_stop_server(
 #[tauri::command]
 async fn check_for_updates(app: AppHandle) -> Result<bool, String> {
     match app.updater() {
-        Ok(updater) => {
-            match updater.check().await {
-                Ok(Some(update)) => {
-                    println!("Update available: {}", update.version);
-                    Ok(true)
-                }
-                Ok(None) => {
-                    println!("No update available");
-                    Ok(false)
-                }
-                Err(e) => {
-                    eprintln!("Failed to check for updates: {}", e);
-                    Err(format!("Failed to check for updates: {}", e))
-                }
+        Ok(updater) => match updater.check().await {
+            Ok(Some(update)) => {
+                println!("Update available: {}", update.version);
+                Ok(true)
             }
-        }
+            Ok(None) => {
+                println!("No update available");
+                Ok(false)
+            }
+            Err(e) => {
+                eprintln!("Failed to check for updates: {}", e);
+                Err(format!("Failed to check for updates: {}", e))
+            }
+        },
         Err(e) => {
             eprintln!("Failed to get updater: {}", e);
             Err(format!("Failed to get updater: {}", e))
@@ -262,32 +260,36 @@ async fn check_for_updates(app: AppHandle) -> Result<bool, String> {
 #[tauri::command]
 async fn install_update(app: AppHandle) -> Result<(), String> {
     match app.updater() {
-        Ok(updater) => {
-            match updater.check().await {
-                Ok(Some(update)) => {
-                    println!("Installing update: {}", update.version);
-                    match update.download_and_install(|chunk_length, content_length| {
-                        println!("Downloaded {} of {:?} bytes", chunk_length, content_length);
-                    }, || {
-                        println!("Download finished");
-                    }).await {
-                        Ok(_) => {
-                            println!("Update installed successfully");
-                            Ok(())
-                        }
-                        Err(e) => {
-                            eprintln!("Failed to install update: {}", e);
-                            Err(format!("Failed to install update: {}", e))
-                        }
+        Ok(updater) => match updater.check().await {
+            Ok(Some(update)) => {
+                println!("Installing update: {}", update.version);
+                match update
+                    .download_and_install(
+                        |chunk_length, content_length| {
+                            println!("Downloaded {} of {:?} bytes", chunk_length, content_length);
+                        },
+                        || {
+                            println!("Download finished");
+                        },
+                    )
+                    .await
+                {
+                    Ok(_) => {
+                        println!("Update installed successfully");
+                        Ok(())
+                    }
+                    Err(e) => {
+                        eprintln!("Failed to install update: {}", e);
+                        Err(format!("Failed to install update: {}", e))
                     }
                 }
-                Ok(None) => Err("No update available".to_string()),
-                Err(e) => {
-                    eprintln!("Failed to check for updates: {}", e);
-                    Err(format!("Failed to check for updates: {}", e))
-                }
             }
-        }
+            Ok(None) => Err("No update available".to_string()),
+            Err(e) => {
+                eprintln!("Failed to check for updates: {}", e);
+                Err(format!("Failed to check for updates: {}", e))
+            }
+        },
         Err(e) => {
             eprintln!("Failed to get updater: {}", e);
             Err(format!("Failed to get updater: {}", e))
@@ -415,6 +417,13 @@ async fn api_root() -> impl IntoResponse {
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
+        .plugin(tauri_plugin_single_instance::init(|app, _, _| {
+            if let Some(window) = app.get_webview_window("main") {
+                let _ = window.unminimize();
+                let _ = window.show();
+                let _ = window.set_focus();
+            }
+        }))
         .plugin(tauri_plugin_opener::init())
         .plugin(tauri_plugin_updater::Builder::new().build())
         .manage(OscState(Mutex::new(None)))
