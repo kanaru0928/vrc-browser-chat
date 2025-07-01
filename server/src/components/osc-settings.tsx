@@ -73,7 +73,7 @@ export function OscSettings() {
     <>
       <h2 className="text-xl font-bold">OSC</h2>
       <div className="space-y-2">
-        <h3 className="font-semibold">Send</h3>
+        <h3 className="font-semibold">Send Address</h3>
         {isConnectionLoading ? (
           <Alert>
             <LoaderCircle size={16} className="animate-spin" />
@@ -92,13 +92,21 @@ export function OscSettings() {
         )}
         <div>
           <div className="flex items-baseline gap-2">
-            <label className="block text-sm mb-1">Port</label>
             <div className="flex-1">
-              <Input
-                defaultValue={sendingPort}
-                onChange={handleSendingPortChange}
-                placeholder="9000"
-              />
+              <div className="flex items-center">
+                <Input
+                  type="text"
+                  className="grow-5 w-36"
+                  placeholder="127.0.0.1"
+                />
+                <span className="mx-2 text-muted-foreground">:</span>
+                <Input
+                  defaultValue={sendingPort}
+                  onChange={handleSendingPortChange}
+                  placeholder="9000"
+                  className="grow-2 w-12"
+                />
+              </div>
               {sendingPortError && (
                 <p className="text-destructive text-sm">{sendingPortError}</p>
               )}
