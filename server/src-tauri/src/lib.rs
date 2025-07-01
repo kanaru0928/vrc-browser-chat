@@ -424,10 +424,10 @@ async fn api_root() -> impl IntoResponse {
 pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_single_instance::init(|app, argv, cwd| {
-            println!("{}, {argv:?}, {cwd}", app.package_info().name);
-
-            app.emit("single-instance", Payload { args: argv, cwd })
-                .unwrap();
+            let _ = app
+                .get_webview_window("main")
+                .expect("Failed to get webview window")
+                .set_focus();
         }))
         .plugin(tauri_plugin_opener::init())
         .plugin(tauri_plugin_updater::Builder::new().build())
