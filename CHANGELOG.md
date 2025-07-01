@@ -1,3 +1,10 @@
+## [1.2.1](https://github.com/kanaru0928/vrc-browser-chat/compare/v1.2.0...v1.2.1) (2025-07-01)
+
+
+### Bug Fixes
+
+* prevent multiple activation ([#35](https://github.com/kanaru0928/vrc-browser-chat/issues/35)) ([1cb1814](https://github.com/kanaru0928/vrc-browser-chat/commit/1cb1814dce4d9279b14858451a4ee103b032b1f2))
+
 # [1.2.0](https://github.com/kanaru0928/vrc-browser-chat/compare/v1.1.0...v1.2.0) (2025-06-21)
 
 
