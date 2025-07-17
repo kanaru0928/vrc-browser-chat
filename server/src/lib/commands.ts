@@ -1,5 +1,5 @@
 import { invoke } from "@tauri-apps/api/core";
-import { InferType, number, object, Schema, string } from "yup";
+import { InferType, number, object, Schema, string, array } from "yup";
 
 type Command = {
   command: string;
@@ -50,6 +50,17 @@ export const checkForUpdatesCommand = {
 export const installUpdateCommand = {
   command: "install_update",
   args: object({}),
+} satisfies Command;
+
+export const scanNetworkCommand = {
+  command: "scan_network",
+  args: object({}),
+  returnType: array(
+    object({
+      ip: string().required(),
+      name: string().required(),
+    })
+  ).required(),
 } satisfies Command;
 
 export async function invokeCommand<T extends Command>(

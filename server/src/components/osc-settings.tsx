@@ -3,29 +3,39 @@ import {
   invokeCommand,
   oscConnectCommand,
   oscDisconnectCommand,
+  scanNetworkCommand,
 } from "@/lib/commands";
 import { yupResolver } from "@hookform/resolvers/yup";
 import {
   CheckCircle2,
+  ChevronsUpDown,
   CircleX,
   LoaderCircle,
   Play,
   Square,
+  Wifi,
 } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 import { InferType, number, object, string } from "yup";
 import { Alert } from "./ui/alert";
 import { Button } from "./ui/button";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormMessage
-} from "./ui/form";
+import { Form, FormControl, FormField, FormItem, FormMessage } from "./ui/form";
 import { Input } from "./ui/input";
 import { Skeleton } from "./ui/skeleton";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "./ui/select";
+
+interface DeviceInfo {
+  ip: string;
+  name: string;
+}
 
 export function OscSettings() {
   const addressSchema = object({
@@ -40,6 +50,8 @@ export function OscSettings() {
   const [isConnected, setIsConnected] = useState<boolean>(false);
   const [isConnectionLoading, setIsConnectionLoading] =
     useState<boolean>(false);
+  const [networkDevices, setNetworkDevices] = useState<DeviceInfo[]>([]);
+  const [isScanning, setIsScanning] = useState<boolean>(false);
 
   const form = useForm<InferType<typeof addressSchema>>({
     resolver: yupResolver(addressSchema),
@@ -52,6 +64,17 @@ export function OscSettings() {
 
   useListenEvent("osc-updated", (event: { status: string }) => {
     setIsConnected(event.status === "Connected");
+    setIsConnectionLoading(false);
+  });
+
+  useListenEvent("osc-error", (event: { error: string }) => {
+    toast.error(`OSC Error: ${event.error}`, {
+      action: {
+        label: "Close",
+        onClick: () => toast.dismiss(),
+      },
+    });
+    setIsConnected(false);
     setIsConnectionLoading(false);
   });
 
@@ -71,6 +94,27 @@ export function OscSettings() {
 
     console.log("OSC connection result:", result);
   };
+
+  const handleDeviceSelect = (device: DeviceInfo) => {
+    form.setValue("address", device.ip);
+  };
+
+  const handleNetworkScan = async () => {
+    setIsScanning(true);
+    try {
+      const devices = await invokeCommand(scanNetworkCommand, {});
+      setNetworkDevices(devices);
+    } catch (error) {
+      toast.error("ネットワークスキャンに失敗しました");
+      console.error("Network scan failed:", error);
+    } finally {
+      setIsScanning(false);
+    }
+  };
+
+  useEffect(() => {
+    handleNetworkScan();
+  }, []);
 
   return (
     <>
@@ -103,7 +147,27 @@ export function OscSettings() {
                       control={form.control}
                       name="address"
                       render={({ field }) => (
-                        <FormItem className="grow-5 w-36">
+                        <FormItem className="grow-5 w-36 flex gap-1">
+                          <Select
+                            onValueChange={(value) => {
+                              const device = networkDevices.find(
+                                (d) => d.ip === value
+                              );
+                              if (device) {
+                                handleDeviceSelect(device);
+                              }
+                            }}
+                            value={field.value}
+                          >
+                            <SelectTrigger>List</SelectTrigger>
+                            <SelectContent>
+                              {networkDevices.map((device) => (
+                                <SelectItem key={device.ip} value={device.ip}>
+                                  {device.name} ({device.ip})
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
                           <FormControl>
                             <Input
                               type="text"
