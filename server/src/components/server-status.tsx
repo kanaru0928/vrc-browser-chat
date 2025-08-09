@@ -7,8 +7,10 @@ import { Alert } from "./ui/alert";
 import { Button } from "./ui/button";
 import { Separator } from "./ui/separator";
 import { toast } from "sonner";
+import { useTranslation } from "react-i18next";
 
 export function ServerStatus() {
+  const { t } = useTranslation();
   const [serverUrl, setServerUrl] = useState<string | null>(null);
 
   useListenEvent("server-status-updated", (event: { url: string }) => {
@@ -17,9 +19,9 @@ export function ServerStatus() {
   });
 
   useListenEvent("server-error", (event: { error: string }) => {
-    toast.error(`Server error: ${event.error}`, {
+    toast.error(`${t("serverError")}: ${event.error}`, {
       action: {
-        label: "Close",
+        label: t("close"),
         onClick: () => toast.dismiss(),
       },
     });
@@ -29,9 +31,9 @@ export function ServerStatus() {
   const handleCopyClick = async () => {
     if (serverUrl) {
       await navigator.clipboard.writeText(serverUrl);
-      toast.success("Server URL copied to clipboard", {
+      toast.success(t("serverUrlCopied"), {
         action: {
-          label: "Close",
+          label: t("close"),
           onClick: () => toast.dismiss(),
         },
       });
@@ -50,25 +52,25 @@ export function ServerStatus() {
 
   return (
     <>
-      <h2 className="text-xl font-bold">Web Status</h2>
+      <h2 className="text-xl font-bold">{t("webStatus")}</h2>
       <div className="flex gap-4">
         <div className="flex-1 space-y-2">
           {!serverUrl ? (
             <Alert variant="destructive">
               <XCircle className="mr-2 h-4 w-4" />
-              Server is down
+              {t("serverIsDown")}
             </Alert>
           ) : (
             <Alert className="text-emerald-300">
               <CheckCircle2 className="mr-2 h-4 w-4" />
-              Server is up
+              {t("serverIsUp")}
             </Alert>
           )}
 
-          <h3 className="text-sm font-semibold">Web URL</h3>
+          <h3 className="text-sm font-semibold">{t("webUrl")}</h3>
           <div className="flex items-center gap-2">
             <p className="py-2 px-3 rounded-md border border-input text-sm flex-1">
-              {serverUrl || "Web server is down"}
+              {serverUrl || t("webServerIsDown")}
             </p>
             <Button
               variant="outline"
@@ -78,12 +80,12 @@ export function ServerStatus() {
               {serverUrl ? (
                 <a href={serverUrl} target="_blank" rel="noopener noreferrer">
                   <ExternalLink size={16} />
-                  Open
+                  {t("open")}
                 </a>
               ) : (
                 <>
                   <ExternalLink size={16} />
-                  Open
+                  {t("open")}
                 </>
               )}
             </Button>
@@ -94,7 +96,7 @@ export function ServerStatus() {
               className="cursor-pointer"
             >
               <Copy size={16} />
-              Copy
+              {t("copy")}
             </Button>
           </div>
         </div>

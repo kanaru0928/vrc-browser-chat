@@ -5,8 +5,10 @@ import { Send } from "lucide-react";
 import { ChangeEvent, useState } from "react";
 import { Button } from "./ui/button";
 import { Textarea } from "./ui/textarea";
+import { useTranslation } from "react-i18next";
 
 export function ChatHistory() {
+  const { t } = useTranslation();
   const [text, setText] = useState("");
   const [history, setHistory] = useState<string[]>([]);
 
@@ -41,7 +43,7 @@ export function ChatHistory() {
 
   return (
     <div className="flex flex-col h-full space-y-4">
-      <h2 className="text-xl font-bold">Chat History</h2>
+      <h2 className="text-xl font-bold">{t("chatHistory")}</h2>
       <div className="flex flex-col h-full gap-2">
         <div className="flex-1 rounded-lg border border-input min-h-10">
           {history.length > 0 ? (
@@ -54,19 +56,19 @@ export function ChatHistory() {
             </ul>
           ) : (
             <div className="p-2 text-sm text-muted-foreground">
-              No messages yet.
+              {t("noMessagesYet")}
             </div>
           )}
         </div>
         <div className="flex items-end gap-2">
           <Textarea
             onChange={handleTextChange}
-            value={text} // テキストエリアの値をstateにバインド
+            value={text}
             className="resize-none max-h-5 h-5"
           />
           <Button onClick={handleSendClick} disabled={!text.trim()}>
             <Send size={16} />
-            Send
+            {t("send")}
           </Button>
         </div>
       </div>

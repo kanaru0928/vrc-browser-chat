@@ -9,16 +9,19 @@ import { Toaster } from "./components/ui/sonner";
 import { useAppVersion } from "./hooks/use-app-version";
 import { useStartupUpdateCheck } from "./hooks/use-startup-update-check";
 import { toast } from "sonner";
+import { useTranslation } from "react-i18next";
+import "./lib/i18n";
 
 function App() {
   const { appVersion } = useAppVersion();
-  
+  const { t } = useTranslation();
+
   useStartupUpdateCheck({
     onUpdateAvailable: () => {
-      toast.info("新しいアップデートが利用可能です", {
-        description: "アプリ情報ボタンから更新できます",
+      toast.info(t("newUpdateAvailable"), {
+        description: t("updateDescription"),
         action: {
-          label: "Close",
+          label: t("close"),
           onClick: () => toast.dismiss(),
         },
       });

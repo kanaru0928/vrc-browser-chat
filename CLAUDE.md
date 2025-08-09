@@ -226,16 +226,41 @@ We welcome pull requests and issue reports! See [CONTRIBUTING.md](docs/CONTRIBUT
 
 This project is licensed under [GPL-3.0](LICENSE).
 
-## Support
-
-- 🐛 Bug reports & 💡 Feature requests: [Issues](https://github.com/kanaru0928/vrc-browser-chat/issues)
-
----
-
-Made with ❤️ for VRChat community
-
 ## Troubleshooting
 
 - If Tauri build errors occur, check your Rust environment  
 - If OSC communication doesn’t work, verify port and VRChat settings  
 - If ESLint errors appear in Next.js, run `pnpm lint` to check details  
+
+## Search Strategy Automation
+
+- **曖昧な指示への対応**: 「探して」「調べて」「確認して」等の指示時は以下を自動実行：
+  1. `mcp__serena__get_symbols_overview({ relative_path: "." })` - プロジェクト全体概要
+  2. `mcp__serena__get_symbols_overview({ relative_path: "src" })` - ソースコード概要
+  3. 必要に応じて `mcp__serena__find_symbol` で詳細調査
+
+## MANDATORY: Project Structure Discovery Protocol
+
+### Auto-execution at Session Start
+
+The following commands MUST be executed automatically at the beginning of each session:
+
+```bash
+# 1. Check existing knowledge
+mcp__serena__check_onboarding_performed
+mcp__serena__list_memories
+
+# 2. Project structure scan
+mcp__serena__list_dir({ relative_path: ".", recursive: false })
+mcp__serena__get_symbols_overview({ relative_path: "src" })
+
+# 3. Configuration files
+mcp__serena__find_file({ file_mask: "package.json", relative_path: "." })
+mcp__serena__find_file({ file_mask: "*.config.*", relative_path: "." })
+```
+
+### Serena Tool Priority
+
+1. **For symbol/function search**: Always try `find_symbol` first
+2. **For text/string search**: Use `search_for_pattern`
+3. **For multiple replacements**: Use `replace_regex` when changing 3+ similar patterns

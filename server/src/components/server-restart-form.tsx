@@ -16,14 +16,16 @@ import {
   FormLabel,
 } from "./ui/form";
 import { Input } from "./ui/input";
+import { useTranslation } from "react-i18next";
 
 export function ServerRestartForm() {
+  const { t } = useTranslation();
   const schema = object({
     port: number()
-      .typeError("Port must be a number")
-      .required("Port is required")
-      .min(1, "Port must be greater than 0")
-      .max(65535, "Port must be less than or equal to 65535")
+      .typeError(t("portMustBeNumber"))
+      .required(t("portRequired"))
+      .min(1, t("portGreaterThanZero"))
+      .max(65535, t("portLessThanMax"))
       .default(11087),
   });
 
@@ -49,7 +51,7 @@ export function ServerRestartForm() {
           name="port"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Server Port</FormLabel>
+              <FormLabel>{t("serverPort")}</FormLabel>
               <FormControl>
                 <Input defaultValue={11087} placeholder="11087" {...field} />
               </FormControl>
@@ -62,7 +64,7 @@ export function ServerRestartForm() {
           )}
         />
         <Button type="submit" className="cursor-pointer">
-          Restart
+          {t("restart")}
         </Button>
       </form>
     </Form>

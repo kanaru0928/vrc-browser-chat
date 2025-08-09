@@ -17,13 +17,15 @@ import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Alert } from "./ui/alert";
 import { Skeleton } from "./ui/skeleton";
+import { useTranslation } from "react-i18next";
 
 export function OscSettings() {
+  const { t } = useTranslation();
   const portSchema = number()
-    .required("Port is required")
-    .typeError("Port must be a number")
-    .min(1, "Port must be greater than 0")
-    .max(65535, "Port must be less than or equal to 65535");
+    .required(t("portRequired"))
+    .typeError(t("portMustBeNumber"))
+    .min(1, t("portGreaterThanZero"))
+    .max(65535, t("portLessThanMax"));
 
   const [sendingPort, setSendingPort] = useState<number>(9000);
   const [sendingPortError, setSendingPortError] = useState<string | null>(null);
@@ -71,9 +73,9 @@ export function OscSettings() {
 
   return (
     <>
-      <h2 className="text-xl font-bold">OSC</h2>
+      <h2 className="text-xl font-bold">{t("osc")}</h2>
       <div className="space-y-2">
-        <h3 className="font-semibold">Send</h3>
+        <h3 className="font-semibold">{t("send")}</h3>
         {isConnectionLoading ? (
           <Alert>
             <LoaderCircle size={16} className="animate-spin" />
@@ -82,17 +84,17 @@ export function OscSettings() {
         ) : isConnected ? (
           <Alert className="text-emerald-300">
             <CheckCircle2 size={16} />
-            Connected
+            {t("connected")}
           </Alert>
         ) : (
           <Alert variant="destructive">
             <CircleX size={16} />
-            Not connected
+            {t("notConnected")}
           </Alert>
         )}
         <div>
           <div className="flex items-baseline gap-2">
-            <label className="block text-sm mb-1">Port</label>
+            <label className="block text-sm mb-1">{t("port")}</label>
             <div className="flex-1">
               <Input
                 defaultValue={sendingPort}
@@ -112,7 +114,7 @@ export function OscSettings() {
             onClick={handleStartClick}
           >
             <Play className="fill-current" strokeWidth={0} />
-            Start
+            {t("start")}
           </Button>
           <Button
             className="flex-1 bg-destructive hover:bg-destructive/90 cursor-pointer"
@@ -120,7 +122,7 @@ export function OscSettings() {
             onClick={handleStopClick}
           >
             <Square className="fill-current" strokeWidth={0} />
-            Stop
+            {t("stop")}
           </Button>
         </div>
       </div>
