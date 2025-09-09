@@ -64,12 +64,6 @@ struct ServerErrorEvent {
     error: String,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
-struct NetworkDevice {
-    ip: String,
-    name: String,
-}
-
 #[tauri::command]
 fn osc_connect(
     address: String,
@@ -78,23 +72,7 @@ fn osc_connect(
     app_handler: AppHandle,
 ) -> Result<(), String> {
     let address_clone = address.clone();
-
-    let osc = match Osc::new(address.clone(), port) {
-        Ok(osc) => osc,
-        Err(e) => {
-            eprintln!("Failed to initialize OSC: {}", e);
-            app_handler
-                .emit(
-                    "osc-error",
-                    ServerErrorEvent {
-                        error: e.to_string(),
-                    },
-                )
-                .unwrap();
-            return Err(format!("Failed to initialize OSC: {}", e));
-        }
-    };
-
+    let osc = Osc::new(address, port);
     match osc.connect() {
         Ok(_) => {
             println!("Connected to OSC server at {}:{}", address_clone, port);
@@ -280,19 +258,6 @@ async fn check_for_updates(app: AppHandle) -> Result<bool, String> {
 }
 
 #[tauri::command]
-async fn scan_network() -> Result<Vec<NetworkDevice>, String> {
-    // 基本的なネットワーク検索実装
-    let mut devices = Vec::new();
-
-    devices.push(NetworkDevice {
-        ip: "127.0.0.1".to_string(),
-        name: "Your PC".to_string(),
-    });
-
-    Ok(devices)
-}
-
-#[tauri::command]
 async fn install_update(app: AppHandle) -> Result<(), String> {
     match app.updater() {
         Ok(updater) => match updater.check().await {
@@ -475,8 +440,7 @@ pub fn run() {
             web_start_server,
             web_stop_server,
             check_for_updates,
-            install_update,
-            scan_network
+            install_update
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

@@ -53,7 +53,7 @@ export function VersionButton() {
             label: "Close",
             onClick: () => toast.dismiss(),
           },
-        },
+        }
       );
     } catch (error) {
       console.error("Update installation failed:", error);

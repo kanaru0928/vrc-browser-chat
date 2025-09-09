@@ -133,7 +133,7 @@ export function AppInfoDialog({ open, onOpenChange }: AppInfoDialogProps) {
             label: "Close",
             onClick: () => toast.dismiss(),
           },
-        },
+        }
       );
     } catch (error) {
       console.error("Update installation failed:", error);
@@ -147,14 +147,17 @@ export function AppInfoDialog({ open, onOpenChange }: AppInfoDialogProps) {
     }
   };
 
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-2xl">
         <DialogHeader>
           <DialogTitle>アプリ情報</DialogTitle>
-          <DialogDescription>VRC Browser Chat の詳細情報</DialogDescription>
+          <DialogDescription>
+            VRC Browser Chat の詳細情報
+          </DialogDescription>
         </DialogHeader>
-
+        
         <Tabs defaultValue="info" className="w-full">
           <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger value="info">情報</TabsTrigger>
@@ -162,30 +165,25 @@ export function AppInfoDialog({ open, onOpenChange }: AppInfoDialogProps) {
             <TabsTrigger value="terms">利用規約</TabsTrigger>
             <TabsTrigger value="license">ライセンス</TabsTrigger>
           </TabsList>
-
+          
           <TabsContent value="info">
             <ScrollArea className="h-96 w-full">
               <div className="space-y-4 p-1">
                 <div className="text-center space-y-2">
                   <h3 className="text-lg font-semibold">VRC Browser Chat</h3>
-                  <p className="text-sm text-muted-foreground">
-                    バージョン {appVersion}
-                  </p>
-                  <p className="text-sm text-muted-foreground">
-                    &copy; 2025 kanaru
-                  </p>
+                  <p className="text-sm text-muted-foreground">バージョン {appVersion}</p>
+                  <p className="text-sm text-muted-foreground">&copy; 2025 kanaru</p>
                 </div>
                 <Separator />
                 <div className="space-y-4">
                   <p className="text-sm">
-                    VRChat と Web
-                    ブラウザ間でのチャット通信を可能にするアプリケーションです。
+                    VRChat と Web ブラウザ間でのチャット通信を可能にするアプリケーションです。
                   </p>
                   <div className="flex justify-center">
                     <Button variant="outline" asChild>
-                      <a
-                        href="https://github.com/kanaru0928/vrc-browser-chat"
-                        target="_blank"
+                      <a 
+                        href="https://github.com/kanaru0928/vrc-browser-chat" 
+                        target="_blank" 
                         rel="noopener noreferrer"
                         className="flex items-center gap-2"
                       >
@@ -198,23 +196,18 @@ export function AppInfoDialog({ open, onOpenChange }: AppInfoDialogProps) {
               </div>
             </ScrollArea>
           </TabsContent>
-
+          
           <TabsContent value="update">
             <ScrollArea className="h-96 w-full">
               <div className="space-y-4 p-1">
                 <p className="text-sm text-muted-foreground">
                   現在のバージョン: v{appVersion}
                 </p>
-
-                <Button
-                  onClick={handleCheckUpdate}
-                  disabled={
-                    updateStatus === "checking" || updateStatus === "installing"
-                  }
-                >
+                
+                <Button onClick={handleCheckUpdate} disabled={updateStatus === "checking" || updateStatus === "installing"}>
                   アップデート確認
                 </Button>
-
+                
                 {updateStatus === "checking" && (
                   <Alert>
                     <AlertDescription>アップデートを確認中...</AlertDescription>
@@ -229,9 +222,7 @@ export function AppInfoDialog({ open, onOpenChange }: AppInfoDialogProps) {
                       </AlertDescription>
                     </Alert>
                     <div className="flex gap-2">
-                      <Button onClick={handleInstallUpdate}>
-                        アップデート
-                      </Button>
+                      <Button onClick={handleInstallUpdate}>アップデート</Button>
                       <Button
                         variant="outline"
                         onClick={() => setUpdateStatus(null)}
@@ -260,7 +251,7 @@ export function AppInfoDialog({ open, onOpenChange }: AppInfoDialogProps) {
               </div>
             </ScrollArea>
           </TabsContent>
-
+          
           <TabsContent value="terms">
             <ScrollArea className="h-96 w-full rounded-md border p-4">
               <div className="text-sm whitespace-pre-wrap">
@@ -268,7 +259,7 @@ export function AppInfoDialog({ open, onOpenChange }: AppInfoDialogProps) {
               </div>
             </ScrollArea>
           </TabsContent>
-
+          
           <TabsContent value="license">
             <ScrollArea className="h-96 w-full rounded-md border p-4">
               <div className="text-sm whitespace-pre-wrap font-mono">

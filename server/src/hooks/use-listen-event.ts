@@ -3,7 +3,7 @@ import { useEffect } from "react";
 
 export function useListenEvent<T>(
   eventName: string,
-  callback: (event: T) => void | Promise<void>,
+  callback: (event: T) => void | Promise<void>
 ): () => void {
   useEffect(() => {
     let unlisten = () => {};
