@@ -7,7 +7,9 @@ interface UseStartupUpdateCheckOptions {
   onError?: (error: unknown) => void;
 }
 
-export function useStartupUpdateCheck(options: UseStartupUpdateCheckOptions = {}) {
+export function useStartupUpdateCheck(
+  options: UseStartupUpdateCheckOptions = {},
+) {
   const [hasChecked, setHasChecked] = useState(false);
   const [updateAvailable, setUpdateAvailable] = useState(false);
 

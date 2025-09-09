@@ -9,14 +9,15 @@ pub struct Osc {
 }
 
 impl Osc {
-    pub fn new(address: String, port: u16) -> Self {
-        let socket =
-            UdpSocket::bind(format!("{}:0", address)).unwrap();
-
-        Osc {
-            address,
-            port,
-            socket,
+    pub fn new(address: String, port: u16) -> Result<Self, String> {
+        if let Ok(socket) = UdpSocket::bind(format!("{}:0", address)) {
+            Ok(Osc {
+                address,
+                port,
+                socket,
+            })
+        } else {
+            Err("Failed to bind UDP socket".into())
         }
     }
 
