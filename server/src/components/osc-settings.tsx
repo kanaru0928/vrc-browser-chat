@@ -8,14 +8,12 @@ import {
 import { yupResolver } from "@hookform/resolvers/yup";
 import {
   CheckCircle2,
-  ChevronsUpDown,
   CircleX,
   LoaderCircle,
   Play,
-  Square,
-  Wifi,
+  Square
 } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { InferType, number, object, string } from "yup";
@@ -23,14 +21,13 @@ import { Alert } from "./ui/alert";
 import { Button } from "./ui/button";
 import { Form, FormControl, FormField, FormItem, FormMessage } from "./ui/form";
 import { Input } from "./ui/input";
-import { Skeleton } from "./ui/skeleton";
 import {
   Select,
   SelectContent,
   SelectItem,
-  SelectTrigger,
-  SelectValue,
+  SelectTrigger
 } from "./ui/select";
+import { Skeleton } from "./ui/skeleton";
 
 interface DeviceInfo {
   ip: string;
@@ -51,7 +48,6 @@ export function OscSettings() {
   const [isConnectionLoading, setIsConnectionLoading] =
     useState<boolean>(false);
   const [networkDevices, setNetworkDevices] = useState<DeviceInfo[]>([]);
-  const [isScanning, setIsScanning] = useState<boolean>(false);
 
   const form = useForm<InferType<typeof addressSchema>>({
     resolver: yupResolver(addressSchema),
@@ -100,15 +96,12 @@ export function OscSettings() {
   };
 
   const handleNetworkScan = async () => {
-    setIsScanning(true);
     try {
       const devices = await invokeCommand(scanNetworkCommand, {});
       setNetworkDevices(devices);
     } catch (error) {
       toast.error("ネットワークスキャンに失敗しました");
       console.error("Network scan failed:", error);
-    } finally {
-      setIsScanning(false);
     }
   };
 
