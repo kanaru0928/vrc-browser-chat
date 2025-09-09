@@ -59,13 +59,13 @@ export const scanNetworkCommand = {
     object({
       ip: string().required(),
       name: string().required(),
-    })
+    }),
   ).required(),
 } satisfies Command;
 
 export async function invokeCommand<T extends Command>(
   command: T,
-  args: InferType<T["args"]>
+  args: InferType<T["args"]>,
 ): Promise<
   T["returnType"] extends Schema<any, any, any, any>
     ? InferType<T["returnType"]>

@@ -151,7 +151,7 @@ export function OscSettings() {
                           <Select
                             onValueChange={(value) => {
                               const device = networkDevices.find(
-                                (d) => d.ip === value
+                                (d) => d.ip === value,
                               );
                               if (device) {
                                 handleDeviceSelect(device);

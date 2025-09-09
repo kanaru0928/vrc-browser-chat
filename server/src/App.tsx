@@ -12,7 +12,7 @@ import { toast } from "sonner";
 
 function App() {
   const { appVersion } = useAppVersion();
-  
+
   useStartupUpdateCheck({
     onUpdateAvailable: () => {
       toast.info("新しいアップデートが利用可能です", {

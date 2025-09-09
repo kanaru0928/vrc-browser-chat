@@ -7,15 +7,16 @@ interface ContainerProps {
   asChild?: boolean;
 }
 
-export function Container({
-  children,
-  className,
-  asChild,
-}: ContainerProps) {
+export function Container({ children, className, asChild }: ContainerProps) {
   const ContainerElement = asChild ? Fragment : "div";
 
   return (
-    <ContainerElement className={cn("bg-card border-2 border-accent p-5 rounded-xl shadow-xl shadow-card/60", className)}>
+    <ContainerElement
+      className={cn(
+        "bg-card border-2 border-accent p-5 rounded-xl shadow-xl shadow-card/60",
+        className,
+      )}
+    >
       {children}
     </ContainerElement>
   );
